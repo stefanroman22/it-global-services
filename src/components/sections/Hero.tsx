@@ -2,27 +2,37 @@
 
 import { motion } from "framer-motion";
 
-export default function Hero() {
+interface HeroProps {
+  /** Tagline (the white-then-accent headline) — first segment is the white part, second is accent. */
+  tagline: string;
+  taglineAccent?: string;
+  subhead: string;
+  logoUrl: string;
+  logoAlt: string;
+}
+
+export default function Hero({ tagline, taglineAccent, subhead, logoUrl, logoAlt }: HeroProps) {
   return (
     <section className="overflow-hidden py-20 md:py-28">
       <div className="container-main">
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Left — text content */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease: "easeOut" }}
           >
             <h1 className="mb-6 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
-              Empowering Your Business{" "}
-              <span className="text-[#49d4fc]">Through Technology</span>
+              {tagline}
+              {taglineAccent && (
+                <>
+                  {" "}
+                  <span className="text-[#49d4fc]">{taglineAccent}</span>
+                </>
+              )}
             </h1>
 
             <p className="mb-8 max-w-lg text-lg leading-relaxed text-white/85">
-              IT Global Services SRL delivers comprehensive IT solutions that
-              drive growth, security, and efficiency. From network
-              infrastructure to custom software development, we are your
-              dedicated technology partner.
+              {subhead}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -51,7 +61,6 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Right — logo showcase with orbiting service icons */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -59,21 +68,18 @@ export default function Hero() {
             className="flex justify-center"
           >
             <div className="relative h-72 w-72 md:h-96 md:w-96">
-              {/* Soft glow ring behind the logo */}
               <div className="absolute inset-0 rounded-full bg-[#49d4fc]/20 blur-3xl" />
               <div className="absolute inset-6 rounded-full border-2 border-dashed border-white/20" />
               <div className="absolute inset-12 rounded-full border border-white/15" />
 
-              {/* Company logo as the centerpiece */}
               <motion.img
-                src="/company-logo.png"
-                alt="IT Global Services"
+                src={logoUrl}
+                alt={logoAlt}
                 className="relative z-10 h-full w-full object-contain drop-shadow-2xl"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
 
-              {/* Floating service icons around logo */}
               <motion.div
                 className="absolute right-0 top-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/90 shadow-xl"
                 animate={{ y: [0, -10, 0] }}

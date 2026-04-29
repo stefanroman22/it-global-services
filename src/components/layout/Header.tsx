@@ -5,14 +5,18 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import ServicesDropdown from "./ServicesDropdown";
 import MobileMenu from "./MobileMenu";
+import type { Service } from "@/data/services";
 
-export default function Header() {
+interface HeaderProps {
+  services: Service[];
+}
+
+export default function Header({ services }: HeaderProps) {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (
@@ -38,13 +42,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-[#2A5088]">
       <div className="container-main flex h-20 items-center justify-between">
-        {/* Left nav */}
         <nav className="hidden items-center gap-1 md:flex">
           <Link href="/" className={linkClass("/")}>
             Home
           </Link>
 
-          {/* Services dropdown trigger */}
           <div ref={dropdownRef} className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -75,11 +77,11 @@ export default function Header() {
               open={dropdownOpen}
               onClose={() => setDropdownOpen(false)}
               variant="header"
+              services={services}
             />
           </div>
         </nav>
 
-        {/* Centered logo */}
         <Link
           href="/"
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap text-center"
@@ -94,7 +96,6 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Right nav */}
         <nav className="hidden items-center gap-1 md:flex">
           <Link href="/about" className={linkClass("/about")}>
             About Us
@@ -104,7 +105,6 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Hamburger (mobile) */}
         <button
           onClick={() => setMobileOpen(true)}
           className="ml-auto text-white md:hidden"
@@ -125,7 +125,7 @@ export default function Header() {
           </svg>
         </button>
 
-        <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
+        <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} services={services} />
       </div>
     </header>
   );

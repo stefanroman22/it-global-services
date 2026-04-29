@@ -4,14 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { services } from "@/data/services";
+import type { Service } from "@/data/services";
 
 interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
+  services: Service[];
 }
 
-export default function MobileMenu({ open, onClose }: MobileMenuProps) {
+export default function MobileMenu({ open, onClose, services }: MobileMenuProps) {
   const pathname = usePathname();
   const [servicesOpen, setServicesOpen] = useState(false);
 
@@ -23,7 +24,6 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-40 bg-black/40"
             initial={{ opacity: 0 }}
@@ -32,7 +32,6 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
             onClick={onClose}
           />
 
-          {/* Slide-in panel from right */}
           <motion.nav
             className="fixed right-0 top-0 z-50 flex h-full w-72 flex-col bg-[#2A5088] px-6 pt-14 shadow-2xl"
             initial={{ x: "100%" }}
@@ -40,7 +39,6 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
           >
-            {/* Logo + Close button */}
             <Link
               href="/"
               onClick={onClose}
@@ -80,7 +78,6 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
               Home
             </Link>
 
-            {/* Services accordion */}
             <button
               onClick={() => setServicesOpen(!servicesOpen)}
               className="flex w-full items-center justify-between py-3 text-lg font-medium text-white transition-colors hover:text-[#fc1717]"

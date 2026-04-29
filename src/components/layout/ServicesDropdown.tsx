@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { services } from "@/data/services";
+import type { Service } from "@/data/services";
 
 interface ServicesDropdownProps {
   open: boolean;
   onClose: () => void;
   variant: "header" | "footer";
+  services: Service[];
   /** Background color of the dropdown panel */
   bgColor?: string;
   /** Background color on link hover */
@@ -20,16 +21,15 @@ export default function ServicesDropdown({
   open,
   onClose,
   variant,
+  services,
   bgColor,
   hoverBgColor,
   textColor,
 }: ServicesDropdownProps) {
-  // Defaults per variant
   const bg = bgColor ?? (variant === "header" ? "#3e9446" : "#3e6bad");
   const hoverBg = hoverBgColor ?? "rgba(255,255,255,0.1)";
   const text = textColor ?? "#ffffff";
 
-  // Footer dropdown opens upward, header opens downward
   const originY = variant === "header" ? -8 : 8;
 
   const positionClasses =
@@ -58,7 +58,6 @@ export default function ServicesDropdown({
                 style={
                   {
                     color: text,
-                    "--hover-bg": hoverBg,
                   } as React.CSSProperties
                 }
                 onMouseEnter={(e) =>

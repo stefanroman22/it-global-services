@@ -2,8 +2,12 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import emailjs from "@emailjs/browser";
-import { contactInfo } from "@/data/contact";
+import type { ContactInfo } from "@/lib/cms";
+
+const FORMS_ENDPOINT =
+  (process.env.NEXT_PUBLIC_CMS_FORMS_ENDPOINT ??
+    "https://cms-backend-roman.vercel.app/forms") +
+  "/it-global-services/contact_form_email";
 
 /* ---- Status overlay (sending → sent → fade out) ---- */
 function StatusOverlay({
@@ -46,7 +50,6 @@ function StatusOverlay({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
             >
-              {/* Spinner */}
               <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center">
                 <svg
                   className="h-10 w-10 animate-spin text-[#074285]"
@@ -83,7 +86,6 @@ function StatusOverlay({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
             >
-              {/* Checkmark */}
               <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                 <svg
                   className="h-8 w-8 text-green-600"
@@ -118,6 +120,8 @@ interface ContactFormProps {
   heading?: string;
   /** Hide the side contact details column */
   hideDetails?: boolean;
+  /** Contact info (from CMS) for the sidebar — required if hideDetails is false. */
+  contact?: ContactInfo;
 }
 
 interface FormData {
@@ -125,7 +129,7 @@ interface FormData {
   email: string;
   phone: string;
   message: string;
-  company_fax: string; // anti-spam
+  company_fax: string; // anti-spam honeypot
 }
 
 interface Errors {
@@ -137,6 +141,7 @@ interface Errors {
 export default function ContactForm({
   heading = "Get in Touch",
   hideDetails = false,
+  contact = {},
 }: ContactFormProps) {
   const [form, setForm] = useState<FormData>({
     name: "",
@@ -170,17 +175,20 @@ export default function ContactForm({
     setStatus("sending");
 
     try {
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        {
+      const res = await fetch(FORMS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: form.name,
           email: form.email,
           phone: form.phone,
           message: form.message,
-        },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
-      );
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Form submit failed: ${res.status}`);
+      }
 
       setStatus("sent");
       setForm({ name: "", email: "", phone: "", message: "", company_fax: "" });
@@ -194,11 +202,16 @@ export default function ContactForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setForm({ ...form, [e.target.name]: e.target.value });
-    // Clear field error on change
     if (errors[e.target.name as keyof Errors]) {
       setErrors({ ...errors, [e.target.name]: undefined });
     }
   }
+
+  const phoneHref = contact.phone ? `tel:${contact.phone.replace(/\s/g, "")}` : undefined;
+  const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
+  const addressHref = contact.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`
+    : undefined;
 
   return (
     <section className="pb-10">
@@ -216,7 +229,6 @@ export default function ContactForm({
         <div
           className={`grid gap-10 ${hideDetails ? "" : "lg:grid-cols-[1fr_380px]"}`}
         >
-          {/* Form */}
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 20 }}
@@ -226,7 +238,7 @@ export default function ContactForm({
             className="space-y-5"
             noValidate
           >
-            {/* Honeypot — hidden from users */}
+            {/* Honeypot */}
             <input
               type="text"
               name="company_fax"
@@ -312,7 +324,6 @@ export default function ContactForm({
               {status === "sending" ? "Sending..." : "Send Message"}
             </button>
 
-            {/* Error message (inline) */}
             <AnimatePresence>
               {status === "error" && (
                 <motion.p
@@ -327,7 +338,6 @@ export default function ContactForm({
             </AnimatePresence>
           </motion.form>
 
-          {/* Status overlay (sending → sent → fade out) */}
           <AnimatePresence>
             {(status === "sending" || status === "sent") && (
               <StatusOverlay
@@ -337,7 +347,6 @@ export default function ContactForm({
             )}
           </AnimatePresence>
 
-          {/* Contact details sidebar */}
           {!hideDetails && (
             <motion.aside
               initial={{ opacity: 0, x: 20 }}
@@ -349,63 +358,71 @@ export default function ContactForm({
               <h3 className="text-lg font-bold">Contact Information</h3>
 
               <div className="space-y-4 text-sm">
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                  </svg>
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <a
-                      href={`tel:${contactInfo.phone.replace(/\s/g, "")}`}
-                      className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
-                    >
-                      {contactInfo.phone}
-                    </a>
+                {contact.phone && phoneHref && (
+                  <div className="flex items-start gap-3">
+                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                    </svg>
+                    <div>
+                      <p className="font-medium">Phone</p>
+                      <a
+                        href={phoneHref}
+                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                      >
+                        {contact.phone}
+                      </a>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                  </svg>
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <a
-                      href={`mailto:${contactInfo.email}`}
-                      className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
-                    >
-                      {contactInfo.email}
-                    </a>
+                {contact.email && emailHref && (
+                  <div className="flex items-start gap-3">
+                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <div>
+                      <p className="font-medium">Email</p>
+                      <a
+                        href={emailHref}
+                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                      >
+                        {contact.email}
+                      </a>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                  <div>
-                    <p className="font-medium">Address</p>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo.address)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
-                    >
-                      {contactInfo.address}
-                    </a>
+                {contact.address && addressHref && (
+                  <div className="flex items-start gap-3">
+                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                    <div>
+                      <p className="font-medium">Address</p>
+                      <a
+                        href={addressHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                      >
+                        {contact.address}
+                      </a>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <p className="font-medium">Working Hours</p>
-                    <p className="opacity-70">{contactInfo.hours}</p>
+                {contact.hours && (
+                  <div className="flex items-start gap-3">
+                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="font-medium">Working Hours</p>
+                      <p className="opacity-70">{contact.hours}</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </motion.aside>
           )}

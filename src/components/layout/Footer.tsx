@@ -4,8 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import ServicesDropdown from "./ServicesDropdown";
+import type { ContactInfo } from "@/lib/cms";
+import type { Service } from "@/data/services";
 
-export default function Footer() {
+interface FooterProps {
+  description: string;
+  contact: ContactInfo;
+  services: Service[];
+  brandName: string;
+}
+
+export default function Footer({ description, contact, services, brandName }: FooterProps) {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,6 +39,12 @@ export default function Footer() {
         : "text-white hover:text-[#fc1717]"
     }`;
 
+  const phoneHref = contact.phone ? `tel:${contact.phone.replace(/\s/g, "")}` : undefined;
+  const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
+  const addressHref = contact.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`
+    : undefined;
+
   return (
     <footer className="bg-[#316936] py-12">
       <div className="container-main">
@@ -39,7 +54,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center gap-3">
               <img
                 src="/company-logo.png"
-                alt="IT Global Services logo"
+                alt={`${brandName} logo`}
                 className="h-16 w-16 object-contain drop-shadow-md"
               />
               <span className="text-xl font-bold tracking-wide text-white">
@@ -47,8 +62,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
-              Your trusted partner for comprehensive IT solutions. We empower
-              businesses through innovative technology and expert support.
+              {description}
             </p>
           </div>
 
@@ -92,6 +106,7 @@ export default function Footer() {
                   open={dropdownOpen}
                   onClose={() => setDropdownOpen(false)}
                   variant="footer"
+                  services={services}
                 />
               </div>
 
@@ -104,42 +119,45 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Contact info */}
+          {/* Contact info — driven by CMS contact_info */}
           <div>
             <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
               Contact
             </h4>
             <div className="space-y-2 text-sm text-white/80">
-              <a
-                href="tel:+40312345678"
-                className="block transition-colors duration-200 hover:text-white"
-              >
-                +40 312 345 678
-              </a>
-              <a
-                href="mailto:office@itglobalservices.ro"
-                className="block transition-colors duration-200 hover:text-white"
-              >
-                office@itglobalservices.ro
-              </a>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=Strada+Exemplu+Nr.+10%2C+Sector+1%2C+Bucharest%2C+Romania"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block transition-colors duration-200 hover:text-white"
-              >
-                Strada Exemplu Nr. 10, Sector 1
-                <br />
-                Bucharest, Romania
-              </a>
+              {phoneHref && (
+                <a
+                  href={phoneHref}
+                  className="block transition-colors duration-200 hover:text-white"
+                >
+                  {contact.phone}
+                </a>
+              )}
+              {emailHref && (
+                <a
+                  href={emailHref}
+                  className="block transition-colors duration-200 hover:text-white"
+                >
+                  {contact.email}
+                </a>
+              )}
+              {addressHref && contact.address && (
+                <a
+                  href={addressHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block transition-colors duration-200 hover:text-white"
+                >
+                  {contact.address}
+                </a>
+              )}
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} IT Global Services SRL. All rights
-          reserved.
+          © {new Date().getFullYear()} {brandName}. All rights reserved.
         </div>
       </div>
     </footer>

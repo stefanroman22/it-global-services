@@ -1,0 +1,31 @@
+{
+  "projectSlug": "it-global-services",
+  "endpoint": "https://cms-backend-roman.vercel.app/content",
+  "services": {
+    "general_brand_name": { "type": "text_block", "page": "General" },
+    "general_tagline": { "type": "text_block", "page": "General" },
+    "general_logo": { "type": "image", "page": "General" },
+    "general_meta_description": { "type": "text_block", "page": "General" },
+    "contact_info": { "type": "key_value", "page": "General" },
+    "contact_form_email": { "type": "email_config", "page": "General" },
+    "key_features": { "type": "repeater", "page": "General" },
+    "services_catalog": { "type": "repeater", "page": "General" },
+    "home_hero_subhead": { "type": "text_block", "page": "Home" },
+    "home_services_header": { "type": "text_block", "page": "Home" },
+    "home_services_subhead": { "type": "text_block", "page": "Home" },
+    "home_why_eyebrow": { "type": "text_block", "page": "Home" },
+    "home_why_header": { "type": "text_block", "page": "Home" },
+    "home_why_subhead": { "type": "text_block", "page": "Home" },
+    "about_banner_title": { "type": "text_block", "page": "About" },
+    "about_banner_subtitle": { "type": "text_block", "page": "About" },
+    "about_intro_heading": { "type": "text_block", "page": "About" },
+    "about_intro_body": { "type": "text_block", "page": "About" },
+    "about_main_body": { "type": "text_block", "page": "About" },
+    "about_pillars_header": { "type": "text_block", "page": "About" },
+    "about_form_heading": { "type": "text_block", "page": "About" },
+    "contact_banner_title": { "type": "text_block", "page": "Contact" },
+    "contact_banner_subtitle": { "type": "text_block", "page": "Contact" },
+    "contact_form_heading": { "type": "text_block", "page": "Contact" },
+    "footer_description": { "type": "text_block", "page": "Footer" }
+  }
+}

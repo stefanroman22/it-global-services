@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import PageBanner from "@/components/ui/PageBanner";
 import ContactForm from "@/components/ui/ContactForm";
 import type { Service } from "@/data/services";
+import type { ContactInfo } from "@/lib/cms";
 
 interface Props {
   service: Service;
+  contact: ContactInfo;
 }
 
-export default function ServicePageContent({ service }: Props) {
+export default function ServicePageContent({ service, contact }: Props) {
   return (
     <div className="page-service">
       <PageBanner
@@ -62,7 +64,7 @@ export default function ServicePageContent({ service }: Props) {
       </section>
 
       {/* Contact form */}
-      <ContactForm heading={`Interested in ${service.title}?`} />
+      <ContactForm heading={`Interested in ${service.title}?`} contact={contact} />
     </div>
   );
 }

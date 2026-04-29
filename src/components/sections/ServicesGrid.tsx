@@ -2,9 +2,15 @@
 
 import { motion } from "framer-motion";
 import ServiceCard from "@/components/ui/ServiceCard";
-import { services } from "@/data/services";
+import type { Service } from "@/data/services";
 
-export default function ServicesGrid() {
+interface ServicesGridProps {
+  services: Service[];
+  header: string;
+  subhead: string;
+}
+
+export default function ServicesGrid({ services, header, subhead }: ServicesGridProps) {
   return (
     <section id="services" className="py-20">
       <div className="container-main">
@@ -15,10 +21,9 @@ export default function ServicesGrid() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="section-title text-white">Our Services</h2>
+          <h2 className="section-title text-white">{header}</h2>
           <p className="section-subtitle mx-auto text-white/75">
-            Comprehensive IT solutions designed to help your business thrive in
-            the digital age.
+            {subhead}
           </p>
         </motion.div>
 

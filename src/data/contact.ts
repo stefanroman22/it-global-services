@@ -1,6 +1,8 @@
-export const contactInfo = {
-  phone: "+40 312 345 678",
-  email: "office@itglobalservices.ro",
-  address: "Strada Exemplu Nr. 10, Sector 1, Bucharest, Romania",
-  hours: "Mon – Fri: 09:00 – 18:00",
-};
+/**
+ * Contact info type — values now live in the CMS `contact_info` (key_value)
+ * service. Fetch via `contactInfo()` from `src/lib/cms.ts`.
+ *
+ * This file remains as a type alias only; the previous hard-coded export
+ * was removed when the site became CMS-driven.
+ */
+export type { ContactInfo as ContactInfo } from "@/lib/cms";
