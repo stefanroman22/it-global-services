@@ -69,7 +69,7 @@ export async function getCmsData(): Promise<CmsContent> {
   }
 
   const res = await fetch(ENDPOINT, {
-    headers: PREVIEW_TOKEN ? { Authorization: `Bearer ${PREVIEW_TOKEN}` } : {},
+    headers: PREVIEW_TOKEN ? { "X-CMS-Preview-Token": PREVIEW_TOKEN } : {},
     next: { revalidate: 60 },
   });
 
