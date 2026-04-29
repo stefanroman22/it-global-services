@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ===== Base layer — resets & defaults ===== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-body text-base leading-relaxed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold leading-tight;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* ===== Component layer — reusable patterns ===== */
+@layer components {
+  /* Container */
+  .container-main {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ---- Buttons ---- */
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg
+           bg-[#3e9446] px-6 py-3 font-semibold text-white
+           transition-all duration-200 hover:brightness-110
+           focus:outline-none focus:ring-2 focus:ring-white/40;
+  }
+
+  .btn-submit {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-lg
+           bg-[#2A5088] px-8 py-3 font-semibold text-white
+           transition-all duration-200 hover:brightness-110
+           disabled:cursor-not-allowed disabled:opacity-50
+           focus:outline-none focus:ring-2 focus:ring-[#2A5088]/40;
+  }
+
+  /* ---- Cards ---- */
+  .card-service {
+    @apply relative overflow-hidden rounded-xl bg-[#3A70A9]
+           p-6 shadow-[0_4px_12px_rgba(184,204,224,0.35)]
+           transition-all duration-300;
+  }
+
+  .card-service:hover {
+    @apply -translate-y-1 shadow-[0_8px_24px_rgba(184,204,224,0.5)];
+  }
+
+  /* ---- Dropdowns ---- */
+  /* Colors and positioning are handled inline by ServicesDropdown component via props */
+
+  /* ---- Section titles ---- */
+  .section-title {
+    @apply mb-4 text-3xl font-bold md:text-4xl;
+  }
+
+  .section-subtitle {
+    @apply mb-10 max-w-2xl text-lg opacity-80;
+  }
+
+  /* ---- Form inputs ---- */
+  .form-input {
+    @apply w-full rounded-lg border border-gray-300 bg-white
+           px-4 py-3 text-[#074285] placeholder-gray-400
+           transition-all duration-200
+           focus:border-[#2A5088] focus:outline-none focus:ring-2 focus:ring-[#2A5088]/20;
+  }
+
+  .form-textarea {
+    @apply w-full rounded-lg border border-gray-300 bg-white
+           px-4 py-3 text-[#074285] placeholder-gray-400
+           transition-all duration-200
+           focus:border-[#2A5088] focus:outline-none focus:ring-2 focus:ring-[#2A5088]/20
+           min-h-[140px] resize-y;
+  }
+
+  .form-label {
+    @apply mb-1 block text-sm font-medium text-[#074285];
+  }
+
+  .form-error {
+    @apply mt-1 text-xs text-red-500;
+  }
+
+  /* ---- Page wrappers (gradient backgrounds) ---- */
+  .page-service {
+    background: linear-gradient(to bottom, #cafcce, #e1fae3, #f7faf8);
+    @apply min-h-screen text-[#074285];
+  }
+
+  .page-about {
+    background: linear-gradient(to bottom, #cbe5f2, #e8f6fc, #f7fbfc);
+    @apply min-h-screen text-[#074285];
+  }
+
+  .page-contact {
+    background: linear-gradient(to bottom, #f7d2da, #fce6eb, #faf2f4);
+    @apply min-h-screen text-[#074285];
+  }
+
+  .page-home {
+    background: linear-gradient(to bottom, #2A5088, #81a9e3, #DAEBFF, #FFFFFF);
+    @apply min-h-screen;
+  }
+}
+
+/* ===== Utility layer ===== */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ===== Theme tokens ===== */
+@theme {
+  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-blue: #2A5088;
+  --color-brand-green: #3e9446;
+  --color-brand-red: #fc1717;
+  --color-card-blue: #3A70A9;
+  --color-text-dark: #074285;
+  --color-footer-green: #316936;
+}
