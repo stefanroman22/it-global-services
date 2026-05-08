@@ -113,15 +113,44 @@ export function repeater<T = Record<string, unknown>>(
 
 // ── Domain types layered over generic shapes ─────────────────────────────────
 
-export interface ContactInfo {
-  phone?: string;
-  email?: string;
-  address?: string;
-  hours?: string;
-}
+/**
+ * `ContactInfo` is intentionally a free-form record now.
+ *
+ * The previous shape pinned four named keys (phone/email/address/
+ * hours), so anything the operator typed outside that set was
+ * dropped on the floor. The contact section now renders WHATEVER
+ * keys exist via `resolveContactCards` (see `lib/contactFields.ts`),
+ * so the operator gets a usable card for every entry without having
+ * to memorise our naming convention.
+ */
+export type ContactInfo = Record<string, string>;
 
 export function contactInfo(content: CmsContent): ContactInfo {
-  return (keyValue(content, "contact_info").entries ?? {}) as ContactInfo;
+  const entries = keyValue(content, "contact_info").entries;
+  if (!entries) return {};
+  // Pre-flatten the legacy array shape ({key,value}[]) to the modern
+  // object shape so callers downstream can treat it uniformly. The
+  // backend `_normalise_published` helper does this server-side too;
+  // duplicating it client-side is cheap and keeps the type honest if
+  // a stale CDN cache or older deploy serves the array form.
+  if (Array.isArray(entries)) {
+    const out: Record<string, string> = {};
+    for (const item of entries as Array<{ key?: unknown; value?: unknown }>) {
+      const k = item?.key;
+      const v = item?.value;
+      if (typeof k === "string" && typeof v === "string" && k.trim()) {
+        out[k.trim()] = v;
+      }
+    }
+    return out;
+  }
+  // Object case — coerce values to strings (CMS sometimes serialises
+  // numbers; downstream resolver only handles string values).
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(entries as Record<string, unknown>)) {
+    if (v != null) out[k] = String(v);
+  }
+  return out;
 }
 
 export interface KeyFeature {

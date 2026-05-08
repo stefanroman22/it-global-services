@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ContactInfo } from "@/lib/cms";
+import { resolveContactCards } from "@/lib/contactFields";
 
 const FORMS_ENDPOINT =
   (process.env.NEXT_PUBLIC_CMS_FORMS_ENDPOINT ??
@@ -207,11 +208,11 @@ export default function ContactForm({
     }
   }
 
-  const phoneHref = contact.phone ? `tel:${contact.phone.replace(/\s/g, "")}` : undefined;
-  const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
-  const addressHref = contact.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`
-    : undefined;
+  // Render every CMS entry as an aside row. Replaces the old
+  // hardcoded phone/email/address/hours block — operator can now name
+  // their fields anything (`program`, `whatsapp`, `mobil`, etc.) and
+  // they all show up with appropriate icons via `resolveContactCards`.
+  const asideCards = resolveContactCards(contact);
 
   return (
     <section className="pb-10">
@@ -358,71 +359,42 @@ export default function ContactForm({
               <h3 className="text-lg font-bold">Contact Information</h3>
 
               <div className="space-y-4 text-sm">
-                {contact.phone && phoneHref && (
-                  <div className="flex items-start gap-3">
-                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Phone</p>
-                      <a
-                        href={phoneHref}
-                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
-                      >
-                        {contact.phone}
-                      </a>
-                    </div>
-                  </div>
-                )}
+                {asideCards.map((card) => {
+                  const valueNode = card.href ? (
+                    <a
+                      href={card.href}
+                      target={card.href.startsWith("http") ? "_blank" : undefined}
+                      rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                    >
+                      {card.value}
+                    </a>
+                  ) : (
+                    <p className="opacity-70">{card.value}</p>
+                  );
 
-                {contact.email && emailHref && (
-                  <div className="flex items-start gap-3">
-                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Email</p>
-                      <a
-                        href={emailHref}
-                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                  return (
+                    <div key={card.key} className="flex items-start gap-3">
+                      <svg
+                        className="mt-0.5 h-5 w-5 shrink-0 opacity-60"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
                       >
-                        {contact.email}
-                      </a>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d={card.iconPath}
+                        />
+                      </svg>
+                      <div>
+                        <p className="font-medium">{card.label}</p>
+                        {valueNode}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {contact.address && addressHref && (
-                  <div className="flex items-start gap-3">
-                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Address</p>
-                      <a
-                        href={addressHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
-                      >
-                        {contact.address}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {contact.hours && (
-                  <div className="flex items-start gap-3">
-                    <svg className="mt-0.5 h-5 w-5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Working Hours</p>
-                      <p className="opacity-70">{contact.hours}</p>
-                    </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             </motion.aside>
           )}
