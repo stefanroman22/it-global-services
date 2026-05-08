@@ -171,6 +171,9 @@ export function resolveContactCard(key: string, value: string): ContactCard {
   };
 }
 
+/** Brand color cycle for unknown-key fallback cards. */
+const FALLBACK_COLORS = ["bg-[#2A5088]", "bg-[#3e9446]", "bg-[#fc1717]"];
+
 /**
  * Resolve every CMS entry into a card. Accepts both the legacy array
  * shape `[{key, value}, …]` and the modern object shape `{key: value}`.
@@ -200,5 +203,15 @@ export function resolveContactCards(
     }
   }
 
-  return pairs.map(([k, v]) => resolveContactCard(k, v));
+  // Cycle brand colors across unknown-key fallback cards so they stay
+  // on-palette instead of all rendering as gray.
+  let fallbackIdx = 0;
+  return pairs.map(([k, v]) => {
+    const card = resolveContactCard(k, v);
+    if (card.color === "bg-[#666]" && card.iconPath === ICON_INFO) {
+      card.color = FALLBACK_COLORS[fallbackIdx % FALLBACK_COLORS.length];
+      fallbackIdx++;
+    }
+    return card;
+  });
 }
