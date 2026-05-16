@@ -86,14 +86,14 @@ export default function Header({ services }: HeaderProps) {
           href="/"
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap text-center"
         >
+          <span className="hidden text-lg font-bold tracking-wide text-white sm:inline md:text-xl">
+            IT GLOBAL<span className="text-[#49d4fc]"> SERVICES</span>
+          </span>
           <img
             src="/company-logo.png"
             alt="IT Global Services logo"
             className="h-14 w-14 object-contain drop-shadow-md"
           />
-          <span className="hidden text-lg font-bold tracking-wide text-white sm:inline md:text-xl">
-            IT GLOBAL<span className="text-[#49d4fc]"> SERVICES</span>
-          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
