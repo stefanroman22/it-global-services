@@ -157,7 +157,7 @@ export default function Footer({ description, contact, services, brandName }: Fo
 
         {/* Bottom bar */}
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} {brandName}
+          © {new Date().getFullYear()} {brandName}. All rights reserved.
         </div>
       </div>
     </footer>
