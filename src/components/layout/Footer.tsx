@@ -40,7 +40,6 @@ export default function Footer({ description, contact, services, brandName }: Fo
     }`;
 
   const phoneHref = contact.phone ? `tel:${contact.phone.replace(/\s/g, "")}` : undefined;
-  const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
   const addressHref = contact.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`
     : undefined;
@@ -131,14 +130,6 @@ export default function Footer({ description, contact, services, brandName }: Fo
                   className="block transition-colors duration-200 hover:text-white"
                 >
                   {contact.phone}
-                </a>
-              )}
-              {emailHref && (
-                <a
-                  href={emailHref}
-                  className="block transition-colors duration-200 hover:text-white"
-                >
-                  {contact.email}
                 </a>
               )}
               {addressHref && contact.address && (
