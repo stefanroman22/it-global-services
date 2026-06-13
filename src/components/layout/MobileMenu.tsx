@@ -10,9 +10,11 @@ interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
   services: Service[];
+  logoUrl: string;
+  logoAlt: string;
 }
 
-export default function MobileMenu({ open, onClose, services }: MobileMenuProps) {
+export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }: MobileMenuProps) {
   const pathname = usePathname();
   const [servicesOpen, setServicesOpen] = useState(false);
 
@@ -45,8 +47,8 @@ export default function MobileMenu({ open, onClose, services }: MobileMenuProps)
               className="absolute left-4 top-4 flex items-center gap-2 whitespace-nowrap"
             >
               <img
-                src="/company-logo.png"
-                alt="IT Global Services logo"
+                src={logoUrl}
+                alt={logoAlt}
                 className="h-10 w-10 object-contain"
               />
               <span className="text-base font-bold tracking-wide text-white">

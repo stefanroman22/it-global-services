@@ -9,9 +9,11 @@ import type { Service } from "@/data/services";
 
 interface HeaderProps {
   services: Service[];
+  logoUrl: string;
+  logoAlt: string;
 }
 
-export default function Header({ services }: HeaderProps) {
+export default function Header({ services, logoUrl, logoAlt }: HeaderProps) {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -90,8 +92,8 @@ export default function Header({ services }: HeaderProps) {
             IT GLOBAL<span className="text-[#49d4fc]"> SERVICES</span>
           </span>
           <img
-            src="/company-logo.png"
-            alt="IT Global Services logo"
+            src={logoUrl}
+            alt={logoAlt}
             className="h-14 w-14 object-contain drop-shadow-md"
           />
         </Link>
@@ -125,7 +127,13 @@ export default function Header({ services }: HeaderProps) {
           </svg>
         </button>
 
-        <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} services={services} />
+        <MobileMenu
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          services={services}
+          logoUrl={logoUrl}
+          logoAlt={logoAlt}
+        />
       </div>
     </header>
   );

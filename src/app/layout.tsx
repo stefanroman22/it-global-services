@@ -8,6 +8,7 @@ import {
   contactInfo,
   servicesCatalog,
   textBlock,
+  image,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
 import "./globals.css";
@@ -43,18 +44,25 @@ export default async function RootLayout({
   const footerDescription =
     textBlock(cms, "footer_description").body ||
     "Your trusted partner for comprehensive IT solutions.";
+  // CMS-managed logo — used by Header (every page), MobileMenu and Footer so a
+  // logo change in the dashboard updates all of them (not just Home/About).
+  const logo = image(cms, "general_logo");
+  const logoUrl = logo.url ?? "/company-logo.png";
+  const logoAlt = logo.alt || `${brandName} logo`;
 
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-body antialiased">
         <ScrollToTop />
-        <Header services={services} />
+        <Header services={services} logoUrl={logoUrl} logoAlt={logoAlt} />
         <main className="min-h-[60vh]">{children}</main>
         <Footer
           description={footerDescription}
           contact={contact}
           services={services}
           brandName={brandName}
+          logoUrl={logoUrl}
+          logoAlt={logoAlt}
         />
       </body>
     </html>

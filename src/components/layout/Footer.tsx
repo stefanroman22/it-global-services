@@ -12,9 +12,11 @@ interface FooterProps {
   contact: ContactInfo;
   services: Service[];
   brandName: string;
+  logoUrl: string;
+  logoAlt: string;
 }
 
-export default function Footer({ description, contact, services, brandName }: FooterProps) {
+export default function Footer({ description, contact, services, brandName, logoUrl, logoAlt }: FooterProps) {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -52,8 +54,8 @@ export default function Footer({ description, contact, services, brandName }: Fo
           <div>
             <Link href="/" className="inline-flex items-center gap-3">
               <img
-                src="/company-logo.png"
-                alt={`${brandName} logo`}
+                src={logoUrl}
+                alt={logoAlt}
                 className="h-16 w-16 object-contain drop-shadow-md"
               />
               <span className="text-xl font-bold tracking-wide text-white">
