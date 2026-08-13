@@ -23,6 +23,9 @@ export type ContactCard = {
   key: string;
   /** Display label — humanised key OR canonical name for known families. */
   label: string;
+  /** i18n key in the `contactCards` namespace for known families; callers
+   *  translate via `t(labelKey)` and fall back to `label` when absent. */
+  labelKey?: string;
   /** The CMS value as-typed by the operator. */
   value: string;
   /** Click target. `null` when the card is informational only. */
@@ -59,34 +62,39 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * lowercased + stripped of underscores/dashes before matching, so
  * `office_hours`, `Office-Hours`, `OFFICEHOURS` all match `hour`.
  */
-const KEY_FAMILIES: Array<{ stems: string[]; label: string; iconPath: string; color: string }> = [
+const KEY_FAMILIES: Array<{ stems: string[]; label: string; labelKey: string; iconPath: string; color: string }> = [
   {
     stems: ["address", "location", "adres", "adresa", "office", "headquarter"],
     label: "Visit Us",
+    labelKey: "visitUs",
     iconPath: ICON_PIN,
     color: "bg-[#fc1717]",
   },
   {
     stems: ["hour", "schedule", "program", "time", "open", "when", "orar"],
     label: "Business Hours",
+    labelKey: "businessHours",
     iconPath: ICON_CLOCK,
     color: "bg-[#2A5088]",
   },
   {
     stems: ["website", "site", "url", "web"],
     label: "Website",
+    labelKey: "website",
     iconPath: ICON_GLOBE,
     color: "bg-[#666]",
   },
   {
     stems: ["phone", "tel", "mobile", "telefon", "cellular"],
     label: "Call Us",
+    labelKey: "callUs",
     iconPath: ICON_PHONE,
     color: "bg-[#2A5088]",
   },
   {
     stems: ["email", "mail", "e-mail"],
     label: "Email Us",
+    labelKey: "emailUs",
     iconPath: ICON_EMAIL,
     color: "bg-[#3e9446]",
   },
@@ -123,6 +131,7 @@ export function resolveContactCard(key: string, value: string): ContactCard {
     return {
       key,
       label: "Email Us",
+      labelKey: "emailUs",
       value: trimmedValue,
       href: `mailto:${trimmedValue}`,
       color: "bg-[#3e9446]",
@@ -133,6 +142,7 @@ export function resolveContactCard(key: string, value: string): ContactCard {
     return {
       key,
       label: "Call Us",
+      labelKey: "callUs",
       value: trimmedValue,
       href: `tel:${trimmedValue.replace(/\s/g, "")}`,
       color: "bg-[#2A5088]",
@@ -153,6 +163,7 @@ export function resolveContactCard(key: string, value: string): ContactCard {
     return {
       key,
       label: family.label,
+      labelKey: family.labelKey,
       value: trimmedValue,
       href,
       color: family.color,

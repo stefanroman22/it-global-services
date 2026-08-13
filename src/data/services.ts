@@ -2,24 +2,26 @@
  * Service catalog type — matches CMS `services_catalog` repeater item shape.
  *
  * Items are fetched from the CMS via `getCmsData()` in `src/lib/cms.ts`.
- * The hand-written array that previously lived here is gone; the icon SVG
- * paths now live in `service-icons.ts` keyed by slug, since SVG paths are
- * not safely client-editable through the CMS.
+ * Cards render an animated scene (see `src/components/ui/ServiceScene.tsx`)
+ * resolved from the CMS-selected `animation` field with slug/title keyword
+ * fallbacks — so a brand-new service added in the dashboard gets a fitting
+ * animation with zero code changes.
  */
+import type { SceneKey } from "@/data/scenes";
+import { serviceScene } from "@/data/scenes";
+import type { ServiceCatalogItem } from "@/lib/cms";
+
 export interface Service {
   slug: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
   features: string[];
-  /** Resolved icon SVG path, looked up from service-icons.ts by slug. */
-  icon: string;
+  /** Resolved animated scene key (CMS `animation` field or keyword match). */
+  scene: SceneKey;
 }
 
-import type { ServiceCatalogItem } from "@/lib/cms";
-import { iconFor } from "./service-icons";
-
-/** Adapt a CMS catalog item to the legacy `Service` shape used by components. */
+/** Adapt a CMS catalog item to the `Service` shape used by components. */
 export function toService(item: ServiceCatalogItem): Service {
   return {
     slug: item.slug,
@@ -27,6 +29,6 @@ export function toService(item: ServiceCatalogItem): Service {
     shortDescription: item.short_description,
     fullDescription: item.full_description,
     features: item.features ?? [],
-    icon: iconFor(item.slug),
+    scene: serviceScene(item.animation, item.slug, item.title),
   };
 }

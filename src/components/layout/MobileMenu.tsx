@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import type { Service } from "@/data/services";
 
 interface MobileMenuProps {
@@ -12,14 +13,37 @@ interface MobileMenuProps {
   services: Service[];
   logoUrl: string;
   logoAlt: string;
+  brandName: string;
 }
 
-export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }: MobileMenuProps) {
+export default function MobileMenu({
+  open,
+  onClose,
+  services,
+  logoUrl,
+  logoAlt,
+  brandName,
+}: MobileMenuProps) {
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const pathname = usePathname();
   const [servicesOpen, setServicesOpen] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Focus the close button when the drawer opens; close on Escape.
+  useEffect(() => {
+    if (!open) return;
+    closeButtonRef.current?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
 
   const linkClass = (href: string) =>
-    `block py-3 text-lg font-medium transition-colors ${pathname === href ? "text-[#fc1717]" : "text-white hover:text-[#fc1717]"
+    `block py-3 text-lg font-medium transition-colors ${
+      pathname === href ? "text-[#fc1717]" : "text-white hover:text-[#49d4fc]"
     }`;
 
   return (
@@ -32,10 +56,12 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
+            aria-hidden="true"
           />
 
           <motion.nav
-            className="fixed right-0 top-0 z-50 flex h-full w-72 flex-col bg-[#2A5088] px-6 pt-14 shadow-2xl"
+            className="fixed right-0 top-0 z-50 flex h-full w-72 flex-col overflow-y-auto bg-header-bar px-6 pb-8 pt-16 shadow-2xl"
+            aria-label={t("home")}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -44,21 +70,24 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
             <Link
               href="/"
               onClick={onClose}
-              className="absolute left-4 top-4 flex items-center gap-2 whitespace-nowrap"
+              className="absolute left-4 right-16 top-4 flex items-center gap-2 whitespace-nowrap"
             >
               <img
                 src={logoUrl}
                 alt={logoAlt}
-                className="h-10 w-10 object-contain"
+                width={44}
+                height={44}
+                className="h-11 w-11 shrink-0 object-contain"
               />
-              <span className="text-base font-bold tracking-wide text-white">
-                IT GLOBAL<span className="text-[#49d4fc]"> SERVICES</span>
+              <span className="truncate text-base font-bold uppercase tracking-wide text-white">
+                {brandName.replace(/\s+S\.?R\.?L\.?\s*$/i, "")}
               </span>
             </Link>
             <button
+              ref={closeButtonRef}
               onClick={onClose}
-              className="absolute right-4 top-5 text-white hover:text-[#fc1717]"
-              aria-label="Close menu"
+              className="absolute right-4 top-5 flex h-9 w-9 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10 hover:text-[#49d4fc]"
+              aria-label={tCommon("closeMenu")}
             >
               <svg
                 className="h-7 w-7"
@@ -66,6 +95,7 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -75,23 +105,25 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
               </svg>
             </button>
 
-
             <Link href="/" onClick={onClose} className={linkClass("/")}>
-              Home
+              {t("home")}
             </Link>
 
             <button
               onClick={() => setServicesOpen(!servicesOpen)}
-              className="flex w-full items-center justify-between py-3 text-lg font-medium text-white transition-colors hover:text-[#fc1717]"
+              aria-expanded={servicesOpen}
+              className="flex w-full cursor-pointer items-center justify-between py-3 text-lg font-medium text-white transition-colors hover:text-[#49d4fc]"
             >
-              Services
+              {t("services")}
               <svg
-                className={`h-4 w-4 transition-transform ${servicesOpen ? "rotate-180" : ""
-                  }`}
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  servicesOpen ? "rotate-180" : ""
+                }`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -116,10 +148,11 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
                         key={s.slug}
                         href={`/services/${s.slug}`}
                         onClick={onClose}
-                        className={`block py-2 text-sm ${pathname === `/services/${s.slug}`
+                        className={`block py-2 text-sm ${
+                          pathname === `/services/${s.slug}`
                             ? "text-[#fc1717]"
                             : "text-white/80 hover:text-white"
-                          }`}
+                        }`}
                       >
                         {s.title}
                       </Link>
@@ -129,12 +162,8 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
               )}
             </AnimatePresence>
 
-            <Link
-              href="/about"
-              onClick={onClose}
-              className={linkClass("/about")}
-            >
-              About Us
+            <Link href="/about" onClick={onClose} className={linkClass("/about")}>
+              {t("about")}
             </Link>
 
             <Link
@@ -142,8 +171,13 @@ export default function MobileMenu({ open, onClose, services, logoUrl, logoAlt }
               onClick={onClose}
               className={linkClass("/contact")}
             >
-              Contact
+              {t("contact")}
             </Link>
+
+            {/* Language selector pinned under the nav */}
+            <div className="mt-6 border-t border-white/15 pt-5">
+              <LanguageSwitcher />
+            </div>
           </motion.nav>
         </>
       )}

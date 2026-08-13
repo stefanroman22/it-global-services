@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   // No `output: "export"` — the site needs server-side rendering with ISR
@@ -6,4 +9,4 @@ const nextConfig: NextConfig = {
   // within 60 seconds of save without redeploying.
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

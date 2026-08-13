@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "home": "Kezdőlap",
+    "services": "Szolgáltatások",
+    "about": "Rólunk",
+    "contact": "Kapcsolat"
+  },
+  "common": {
+    "skipToContent": "Ugrás a tartalomhoz",
+    "openMenu": "Menü megnyitása",
+    "closeMenu": "Menü bezárása",
+    "loading": "Betöltés…",
+    "learnMore": "Tudjon meg többet",
+    "backToTop": "Vissza a tetejére"
+  },
+  "hero": {
+    "ctaPrimary": "Kérjen ingyenes konzultációt",
+    "ctaSecondary": "Szolgáltatásaink",
+    "scrollCue": "Görgessen a szolgáltatásokhoz"
+  },
+  "service": {
+    "whatWeOffer": "Amit kínálunk",
+    "interestedIn": "Érdekli: {title}?",
+    "backToServices": "Összes szolgáltatás",
+    "otherServices": "További szolgáltatások"
+  },
+  "form": {
+    "name": "Név",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "message": "Üzenet",
+    "namePlaceholder": "Az Ön neve",
+    "emailPlaceholder": "on@pelda.hu",
+    "phonePlaceholder": "+40 700 000 000",
+    "messagePlaceholder": "Írja le a problémáját vagy kérdését…",
+    "nameRequired": "A név megadása kötelező.",
+    "emailRequired": "Az e-mail cím megadása kötelező.",
+    "emailInvalid": "Kérjük, adjon meg egy érvényes e-mail címet.",
+    "messageRequired": "Az üzenet megadása kötelező.",
+    "send": "Üzenet küldése",
+    "sending": "Küldés…",
+    "sendingTitle": "Küldés…",
+    "sendingBody": "Az üzenete úton van.",
+    "sentTitle": "Üzenet elküldve!",
+    "sentBody": "Köszönjük megkeresését! Hamarosan jelentkezünk.",
+    "errorBody": "Hiba történt. Kérjük, próbálja újra később.",
+    "contactInfoHeading": "Elérhetőségek",
+    "requiredHint": "kötelező mező"
+  },
+  "contactCards": {
+    "emailUs": "Írjon nekünk",
+    "callUs": "Hívjon minket",
+    "visitUs": "Látogasson el hozzánk",
+    "businessHours": "Nyitvatartás",
+    "website": "Weboldal"
+  },
+  "footer": {
+    "navigation": "Navigáció",
+    "contact": "Kapcsolat",
+    "rights": "Minden jog fenntartva."
+  },
+  "lang": {
+    "label": "Nyelv",
+    "ro": "Română",
+    "en": "English",
+    "hu": "Magyar"
+  },
+  "theme": {
+    "toLight": "Váltás világos témára",
+    "toDark": "Váltás sötét témára"
+  },
+  "notFound": {
+    "title": "Az oldal nem található",
+    "body": "Sajnáljuk, a keresett oldal nem létezik vagy áthelyezték.",
+    "backHome": "Vissza a kezdőlapra"
+  },
+  "fallbacks": {
+    "brandName": "IT Global Services SRL",
+    "metaDescription": "Számítógép- és laptopjavítás, Windows telepítés, perifériák, adatmentés és távoli IT-segítség — Kolozsváron és egész Romániában.",
+    "tagline": "IT-megoldások Önnek és vállalkozásának",
+    "servicesHeader": "Szolgáltatásaink",
+    "whyHeader": "Miért válasszon minket",
+    "whyEyebrow": "Miért mi",
+    "aboutTitle": "Rólunk",
+    "contactTitle": "Kapcsolat",
+    "formHeading": "Küldjön nekünk üzenetet",
+    "footerDescription": "Megbízható partnere a teljes körű IT-szolgáltatásokban.",
+    "ctaHeading": "Kérdése van az IT-vel kapcsolatban? Beszéljünk."
+  },
+  "cta": {
+    "button": "Kezdjük el"
+  }
+}

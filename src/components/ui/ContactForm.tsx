@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import type { ContactInfo } from "@/lib/cms";
 import { resolveContactCards } from "@/lib/contactFields";
 
@@ -18,6 +19,7 @@ function StatusOverlay({
   phase: "sending" | "sent";
   onDone: () => void;
 }) {
+  const t = useTranslations("form");
   useEffect(() => {
     if (phase === "sent") {
       const timer = setTimeout(onDone, 1500);
@@ -29,14 +31,16 @@ function StatusOverlay({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 px-4 backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <motion.div
-        className="w-full max-w-md rounded-2xl bg-white px-6 py-10 text-center shadow-2xl sm:px-10"
+        role="status"
+        aria-live="polite"
+        className="w-full max-w-md rounded-2xl bg-surface-card px-6 py-10 text-center shadow-2xl sm:px-10"
         initial={{ opacity: 0, scale: 0.9, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
@@ -53,9 +57,10 @@ function StatusOverlay({
             >
               <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center">
                 <svg
-                  className="h-10 w-10 animate-spin text-[#074285]"
+                  className="h-10 w-10 animate-spin text-ink"
                   fill="none"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <circle
                     className="opacity-25"
@@ -72,11 +77,11 @@ function StatusOverlay({
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-[#074285] sm:text-2xl">
-                Sending...
+              <h3 className="mb-2 text-xl font-bold text-ink sm:text-2xl">
+                {t("sendingTitle")}
               </h3>
-              <p className="text-sm leading-relaxed text-[#074285]/70 sm:text-base">
-                Your message is on its way.
+              <p className="text-sm leading-relaxed text-ink opacity-70 sm:text-base">
+                {t("sendingBody")}
               </p>
             </motion.div>
           ) : (
@@ -87,13 +92,14 @@ function StatusOverlay({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
             >
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40">
                 <svg
-                  className="h-8 w-8 text-green-600"
+                  className="h-8 w-8 text-green-600 dark:text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth={2.5}
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -102,11 +108,11 @@ function StatusOverlay({
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-[#074285] sm:text-2xl">
-                Message Sent!
+              <h3 className="mb-2 text-xl font-bold text-ink sm:text-2xl">
+                {t("sentTitle")}
               </h3>
-              <p className="text-sm leading-relaxed text-[#074285]/70 sm:text-base">
-                Thank you for reaching out. We will get back to you shortly.
+              <p className="text-sm leading-relaxed text-ink opacity-70 sm:text-base">
+                {t("sentBody")}
               </p>
             </motion.div>
           )}
@@ -140,10 +146,12 @@ interface Errors {
 }
 
 export default function ContactForm({
-  heading = "Get in Touch",
+  heading,
   hideDetails = false,
   contact = {},
 }: ContactFormProps) {
+  const t = useTranslations("form");
+  const tCards = useTranslations("contactCards");
   const [form, setForm] = useState<FormData>({
     name: "",
     email: "",
@@ -153,17 +161,19 @@ export default function ContactForm({
   });
 
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
 
   function validate(): boolean {
     const errs: Errors = {};
-    if (!form.name.trim()) errs.name = "Name is required.";
+    if (!form.name.trim()) errs.name = t("nameRequired");
     if (!form.email.trim()) {
-      errs.email = "Email is required.";
+      errs.email = t("emailRequired");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = "Please enter a valid email.";
+      errs.email = t("emailInvalid");
     }
-    if (!form.message.trim()) errs.message = "Message is required.";
+    if (!form.message.trim()) errs.message = t("messageRequired");
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -200,7 +210,7 @@ export default function ContactForm({
   }
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (errors[e.target.name as keyof Errors]) {
@@ -221,10 +231,10 @@ export default function ContactForm({
           className="section-title"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "0px 0px 200px 0px" }}
           transition={{ duration: 0.5 }}
         >
-          {heading}
+          {heading ?? t("contactInfoHeading")}
         </motion.h2>
 
         <div
@@ -234,7 +244,7 @@ export default function ContactForm({
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px 200px 0px" }}
             transition={{ duration: 0.5 }}
             className="space-y-5"
             noValidate
@@ -254,7 +264,7 @@ export default function ContactForm({
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="name" className="form-label">
-                  Name *
+                  {t("name")} *
                 </label>
                 <input
                   id="name"
@@ -262,15 +272,23 @@ export default function ContactForm({
                   type="text"
                   value={form.name}
                   onChange={handleChange}
+                  autoComplete="name"
+                  aria-required="true"
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? "name-error" : undefined}
                   className={`form-input ${errors.name ? "border-red-400" : ""}`}
-                  placeholder="Your name"
+                  placeholder={t("namePlaceholder")}
                 />
-                {errors.name && <p className="form-error">{errors.name}</p>}
+                {errors.name && (
+                  <p id="name-error" role="alert" className="form-error">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label htmlFor="email" className="form-label">
-                  Email *
+                  {t("email")} *
                 </label>
                 <input
                   id="email"
@@ -278,16 +296,24 @@ export default function ContactForm({
                   type="email"
                   value={form.email}
                   onChange={handleChange}
+                  autoComplete="email"
+                  aria-required="true"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                   className={`form-input ${errors.email ? "border-red-400" : ""}`}
-                  placeholder="you@example.com"
+                  placeholder={t("emailPlaceholder")}
                 />
-                {errors.email && <p className="form-error">{errors.email}</p>}
+                {errors.email && (
+                  <p id="email-error" role="alert" className="form-error">
+                    {errors.email}
+                  </p>
+                )}
               </div>
             </div>
 
             <div>
               <label htmlFor="phone" className="form-label">
-                Phone
+                {t("phone")}
               </label>
               <input
                 id="phone"
@@ -295,25 +321,31 @@ export default function ContactForm({
                 type="tel"
                 value={form.phone}
                 onChange={handleChange}
+                autoComplete="tel"
                 className="form-input"
-                placeholder="+40 700 000 000"
+                placeholder={t("phonePlaceholder")}
               />
             </div>
 
             <div>
               <label htmlFor="message" className="form-label">
-                Message *
+                {t("message")} *
               </label>
               <textarea
                 id="message"
                 name="message"
                 value={form.message}
                 onChange={handleChange}
+                aria-required="true"
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? "message-error" : undefined}
                 className={`form-textarea ${errors.message ? "border-red-400" : ""}`}
-                placeholder="Tell us about your project or question..."
+                placeholder={t("messagePlaceholder")}
               />
               {errors.message && (
-                <p className="form-error">{errors.message}</p>
+                <p id="message-error" role="alert" className="form-error">
+                  {errors.message}
+                </p>
               )}
             </div>
 
@@ -322,18 +354,19 @@ export default function ContactForm({
               className="btn-submit"
               disabled={status === "sending"}
             >
-              {status === "sending" ? "Sending..." : "Send Message"}
+              {status === "sending" ? t("sending") : t("send")}
             </button>
 
             <AnimatePresence>
               {status === "error" && (
                 <motion.p
+                  role="alert"
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700"
+                  className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700 dark:bg-red-950/60 dark:text-red-300"
                 >
-                  Something went wrong. Please try again later.
+                  {t("errorBody")}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -341,10 +374,7 @@ export default function ContactForm({
 
           <AnimatePresence>
             {(status === "sending" || status === "sent") && (
-              <StatusOverlay
-                phase={status}
-                onDone={() => setStatus("idle")}
-              />
+              <StatusOverlay phase={status} onDone={() => setStatus("idle")} />
             )}
           </AnimatePresence>
 
@@ -352,20 +382,25 @@ export default function ContactForm({
             <motion.aside
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "0px 0px 200px 0px" }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              className="self-start space-y-6 rounded-xl bg-white/60 p-8 shadow-sm backdrop-blur-sm"
+              className="space-y-6 self-start rounded-xl bg-surface-card-softer p-8 shadow-sm backdrop-blur-sm"
             >
-              <h3 className="text-lg font-bold">Contact Information</h3>
+              <h3 className="text-lg font-bold">{t("contactInfoHeading")}</h3>
 
               <div className="space-y-4 text-sm">
                 {asideCards.map((card) => {
+                  const label = card.labelKey ? tCards(card.labelKey) : card.label;
                   const valueNode = card.href ? (
                     <a
                       href={card.href}
                       target={card.href.startsWith("http") ? "_blank" : undefined}
-                      rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="opacity-70 transition-colors duration-200 hover:text-[#074285] hover:opacity-100"
+                      rel={
+                        card.href.startsWith("http")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      className="opacity-70 transition-colors duration-200 hover:text-ink hover:opacity-100"
                     >
                       {card.value}
                     </a>
@@ -381,6 +416,7 @@ export default function ContactForm({
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         strokeWidth={1.5}
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -389,7 +425,7 @@ export default function ContactForm({
                         />
                       </svg>
                       <div>
-                        <p className="font-medium">{card.label}</p>
+                        <p className="font-medium">{label}</p>
                         {valueNode}
                       </div>
                     </div>

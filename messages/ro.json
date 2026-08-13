@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "home": "Acasă",
+    "services": "Servicii",
+    "about": "Despre noi",
+    "contact": "Contact"
+  },
+  "common": {
+    "skipToContent": "Sari la conținut",
+    "openMenu": "Deschide meniul",
+    "closeMenu": "Închide meniul",
+    "loading": "Se încarcă…",
+    "learnMore": "Află mai mult",
+    "backToTop": "Înapoi sus"
+  },
+  "hero": {
+    "ctaPrimary": "Cere o consultație gratuită",
+    "ctaSecondary": "Serviciile noastre",
+    "scrollCue": "Derulează la servicii"
+  },
+  "service": {
+    "whatWeOffer": "Ce oferim",
+    "interestedIn": "Te interesează {title}?",
+    "backToServices": "Toate serviciile",
+    "otherServices": "Alte servicii"
+  },
+  "form": {
+    "name": "Nume",
+    "email": "Email",
+    "phone": "Telefon",
+    "message": "Mesaj",
+    "namePlaceholder": "Numele tău",
+    "emailPlaceholder": "tu@exemplu.ro",
+    "phonePlaceholder": "+40 700 000 000",
+    "messagePlaceholder": "Spune-ne ce problemă ai sau ce te interesează…",
+    "nameRequired": "Numele este obligatoriu.",
+    "emailRequired": "Emailul este obligatoriu.",
+    "emailInvalid": "Te rugăm să introduci un email valid.",
+    "messageRequired": "Mesajul este obligatoriu.",
+    "send": "Trimite mesajul",
+    "sending": "Se trimite…",
+    "sendingTitle": "Se trimite…",
+    "sendingBody": "Mesajul tău este pe drum.",
+    "sentTitle": "Mesaj trimis!",
+    "sentBody": "Îți mulțumim! Revenim cu un răspuns în cel mai scurt timp.",
+    "errorBody": "A apărut o eroare. Te rugăm să încerci din nou mai târziu.",
+    "contactInfoHeading": "Date de contact",
+    "requiredHint": "câmp obligatoriu"
+  },
+  "contactCards": {
+    "emailUs": "Scrie-ne",
+    "callUs": "Sună-ne",
+    "visitUs": "Vizitează-ne",
+    "businessHours": "Program",
+    "website": "Website"
+  },
+  "footer": {
+    "navigation": "Navigare",
+    "contact": "Contact",
+    "rights": "Toate drepturile rezervate."
+  },
+  "lang": {
+    "label": "Limbă",
+    "ro": "Română",
+    "en": "English",
+    "hu": "Magyar"
+  },
+  "theme": {
+    "toLight": "Comută pe tema luminoasă",
+    "toDark": "Comută pe tema întunecată"
+  },
+  "notFound": {
+    "title": "Pagina nu a fost găsită",
+    "body": "Ne pare rău, pagina căutată nu există sau a fost mutată.",
+    "backHome": "Înapoi acasă"
+  },
+  "fallbacks": {
+    "brandName": "IT Global Services SRL",
+    "metaDescription": "Reparații calculatoare și laptopuri, instalare Windows, periferice, recuperare date și asistență IT la distanță — în Cluj-Napoca și în toată România.",
+    "tagline": "Soluții IT pentru tine și afacerea ta",
+    "servicesHeader": "Serviciile noastre",
+    "whyHeader": "De ce să ne alegi",
+    "whyEyebrow": "De ce noi",
+    "aboutTitle": "Despre noi",
+    "contactTitle": "Contact",
+    "formHeading": "Trimite-ne un mesaj",
+    "footerDescription": "Partenerul tău de încredere pentru servicii IT complete.",
+    "ctaHeading": "Ai o problemă IT? Hai să o rezolvăm."
+  },
+  "cta": {
+    "button": "Începe acum"
+  }
+}

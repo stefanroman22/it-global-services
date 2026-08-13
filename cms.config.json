@@ -1,6 +1,8 @@
 {
   "projectSlug": "it-global-services",
   "endpoint": "https://cms-backend-roman.vercel.app/content",
+  "locales": ["en", "ro", "hu"],
+  "defaultLocale": "en",
   "services": {
     "general_brand_name": { "type": "text_block", "page": "General" },
     "general_tagline": { "type": "text_block", "page": "General" },
@@ -16,6 +18,7 @@
     "home_why_eyebrow": { "type": "text_block", "page": "Home" },
     "home_why_header": { "type": "text_block", "page": "Home" },
     "home_why_subhead": { "type": "text_block", "page": "Home" },
+    "home_cta_heading": { "type": "text_block", "page": "Home" },
     "about_banner_title": { "type": "text_block", "page": "About" },
     "about_banner_subtitle": { "type": "text_block", "page": "About" },
     "about_intro_heading": { "type": "text_block", "page": "About" },

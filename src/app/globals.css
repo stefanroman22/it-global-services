@@ -1,23 +1,113 @@
 @import "tailwindcss";
 
+/* Dark mode is driven by the `data-theme` attribute set on <html> by the
+   ThemeToggle (persisted in localStorage, seeded from system preference by
+   an inline no-flash script in the root layout). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ===== Themable tokens =====
+   Light values are the canonical brand palette and MUST stay untouched.
+   Dark values re-map the same hues to deep-lightness equivalents. */
+:root {
+  color-scheme: light;
+
+  --ink: #074285;
+  --surface-page: #ffffff;
+  --surface-card: #ffffff;
+  --surface-card-soft: rgba(255, 255, 255, 0.7);
+  --surface-card-softer: rgba(255, 255, 255, 0.6);
+  --surface-chip: rgba(255, 255, 255, 0.4);
+  --border-card: #f3f4f6;
+  --header-bg: #2a5088;
+  --footer-bg: #316936;
+  --service-card-bg: #3a70a9;
+  --why-section-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-placeholder: #9ca3af;
+  --accent-green: #3e9446;
+  --accent-red: #fc1717;
+  --accent-cyan: #49d4fc;
+
+  --shadow-card-service: 0 4px 12px rgba(184, 204, 224, 0.35);
+  --shadow-card-service-hover: 0 8px 24px rgba(184, 204, 224, 0.5);
+
+  --grad-home: linear-gradient(to bottom, #2a5088, #81a9e3, #daebff, #ffffff);
+  --grad-service: linear-gradient(to bottom, #cafcce, #e1fae3, #f7faf8);
+  --grad-about: linear-gradient(to bottom, #cbe5f2, #e8f6fc, #f7fbfc);
+  --grad-contact: linear-gradient(to bottom, #f7d2da, #fce6eb, #faf2f4);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #d9e6f7;
+  --surface-page: #0b1322;
+  --surface-card: #13233f;
+  --surface-card-soft: rgba(19, 35, 63, 0.78);
+  --surface-card-softer: rgba(19, 35, 63, 0.62);
+  --surface-chip: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.08);
+  --header-bg: #142845;
+  --footer-bg: #0f2113;
+  --service-card-bg: #1d3a5f;
+  --why-section-bg: #0e1930;
+  --input-bg: #0f1e36;
+  --input-border: rgba(255, 255, 255, 0.16);
+  --input-placeholder: rgba(217, 230, 247, 0.45);
+  --accent-green: #57c168;
+  --accent-red: #ff6467;
+  --accent-cyan: #49d4fc;
+
+  --shadow-card-service: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card-service-hover: 0 8px 24px rgba(0, 0, 0, 0.55);
+
+  --grad-home: linear-gradient(to bottom, #16294a, #12213c, #0d1830, #0b1322);
+  --grad-service: linear-gradient(to bottom, #10241a, #0d1d16, #0b1322);
+  --grad-about: linear-gradient(to bottom, #0f2233, #0d1c2b, #0b1322);
+  --grad-contact: linear-gradient(to bottom, #2a1520, #1f111a, #0b1322);
+}
+
 /* ===== Base layer — resets & defaults ===== */
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* The native scrollbar is replaced by the fixed scroll-progress bar
+       rendered in the root layout (ScrollProgress component). */
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
     @apply font-body text-base leading-relaxed;
+    background-color: var(--surface-page);
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-bold leading-tight;
+    text-wrap: balance;
   }
 
   a {
     @apply transition-colors duration-200;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
@@ -26,6 +116,20 @@
   /* Container */
   .container-main {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Shared vertical rhythm — every landing/page section uses the same
+     padding so section-to-section distance stays uniform. Sections may
+     grow taller with content but never shrink below this. */
+  .section-block {
+    @apply py-14 md:py-20;
+  }
+
+  /* Skip link — visually hidden until focused (keyboard users) */
+  .skip-link {
+    @apply absolute left-4 top-4 z-[100] -translate-y-24 rounded-lg
+           bg-white px-4 py-2 text-sm font-semibold text-[#074285]
+           shadow-lg transition-transform duration-200 focus:translate-y-0;
   }
 
   /* ---- Buttons ---- */
@@ -44,19 +148,27 @@
            focus:outline-none focus:ring-2 focus:ring-[#2A5088]/40;
   }
 
+  .dark .btn-submit,
+  [data-theme="dark"] .btn-submit {
+    @apply bg-[#3A70A9] focus:ring-[#3A70A9]/40;
+  }
+
   /* ---- Cards ---- */
   .card-service {
-    @apply relative overflow-hidden rounded-xl bg-[#3A70A9]
-           p-6 shadow-[0_4px_12px_rgba(184,204,224,0.35)]
-           transition-all duration-300;
+    @apply relative overflow-hidden rounded-xl p-6 transition-all duration-300;
+    background-color: var(--service-card-bg);
+    box-shadow: var(--shadow-card-service);
   }
 
   .card-service:hover {
-    @apply -translate-y-1 shadow-[0_8px_24px_rgba(184,204,224,0.5)];
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-card-service-hover);
   }
 
-  /* ---- Dropdowns ---- */
-  /* Colors and positioning are handled inline by ServicesDropdown component via props */
+  .card-surface {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-card);
+  }
 
   /* ---- Section titles ---- */
   .section-title {
@@ -69,46 +181,63 @@
 
   /* ---- Form inputs ---- */
   .form-input {
-    @apply w-full rounded-lg border border-gray-300 bg-white
-           px-4 py-3 text-[#074285] placeholder-gray-400
+    @apply w-full rounded-lg border px-4 py-3
            transition-all duration-200
            focus:border-[#2A5088] focus:outline-none focus:ring-2 focus:ring-[#2A5088]/20;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--ink);
+  }
+
+  .form-input::placeholder {
+    color: var(--input-placeholder);
   }
 
   .form-textarea {
-    @apply w-full rounded-lg border border-gray-300 bg-white
-           px-4 py-3 text-[#074285] placeholder-gray-400
+    @apply w-full rounded-lg border px-4 py-3
            transition-all duration-200
            focus:border-[#2A5088] focus:outline-none focus:ring-2 focus:ring-[#2A5088]/20
            min-h-[140px] resize-y;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--ink);
+  }
+
+  .form-textarea::placeholder {
+    color: var(--input-placeholder);
   }
 
   .form-label {
-    @apply mb-1 block text-sm font-medium text-[#074285];
+    @apply mb-1 block text-sm font-medium;
+    color: var(--ink);
   }
 
   .form-error {
-    @apply mt-1 text-xs text-red-500;
+    @apply mt-1 text-xs;
+    color: var(--accent-red);
   }
 
-  /* ---- Page wrappers (gradient backgrounds) ---- */
+  /* ---- Page wrappers (gradient backgrounds, theme-aware) ---- */
   .page-service {
-    background: linear-gradient(to bottom, #cafcce, #e1fae3, #f7faf8);
-    @apply min-h-screen text-[#074285];
+    background: var(--grad-service);
+    @apply min-h-screen;
+    color: var(--ink);
   }
 
   .page-about {
-    background: linear-gradient(to bottom, #cbe5f2, #e8f6fc, #f7fbfc);
-    @apply min-h-screen text-[#074285];
+    background: var(--grad-about);
+    @apply min-h-screen;
+    color: var(--ink);
   }
 
   .page-contact {
-    background: linear-gradient(to bottom, #f7d2da, #fce6eb, #faf2f4);
-    @apply min-h-screen text-[#074285];
+    background: var(--grad-contact);
+    @apply min-h-screen;
+    color: var(--ink);
   }
 
   .page-home {
-    background: linear-gradient(to bottom, #2A5088, #81a9e3, #DAEBFF, #FFFFFF);
+    background: var(--grad-home);
     @apply min-h-screen;
   }
 }
@@ -118,16 +247,60 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .text-ink {
+    color: var(--ink);
+  }
+
+  .bg-surface-card {
+    background-color: var(--surface-card);
+  }
+
+  .bg-surface-card-soft {
+    background-color: var(--surface-card-soft);
+  }
+
+  .bg-surface-card-softer {
+    background-color: var(--surface-card-softer);
+  }
+
+  .bg-surface-chip {
+    background-color: var(--surface-chip);
+  }
+
+  .bg-header-bar {
+    background-color: var(--header-bg);
+  }
+
+  .bg-footer-bar {
+    background-color: var(--footer-bg);
+  }
+
+  .bg-why-section {
+    background-color: var(--why-section-bg);
+  }
+
+  .border-card-line {
+    border-color: var(--border-card);
+  }
 }
 
 /* ===== Theme tokens ===== */
 @theme {
   --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-brand-blue: #2A5088;
+  --color-brand-blue: #2a5088;
   --color-brand-green: #3e9446;
   --color-brand-red: #fc1717;
-  --color-card-blue: #3A70A9;
+  --color-card-blue: #3a70a9;
   --color-text-dark: #074285;
   --color-footer-green: #316936;
+  --color-brand-cyan: #49d4fc;
+
+  /* Semantic z-index scale */
+  --z-dropdown: 30;
+  --z-sticky: 40;
+  --z-modal-backdrop: 50;
+  --z-modal: 60;
+  --z-overlay: 100;
 }

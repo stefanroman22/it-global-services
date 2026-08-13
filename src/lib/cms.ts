@@ -3,8 +3,15 @@
  *
  * Uses the public CMS content endpoint at NEXT_PUBLIC_CMS_ENDPOINT
  * (set on Vercel: prod → /content/it-global-services, preview →
- * /content/it-global-services/draft). Preview also sends the
- * NEXT_PUBLIC_CMS_PREVIEW_TOKEN as Bearer authorisation.
+ * /content/it-global-services/draft). Preview sends the
+ * NEXT_PUBLIC_CMS_PREVIEW_TOKEN via the X-CMS-Preview-Token header.
+ *
+ * Language support: the Roman Technologies CMS serves per-locale manifests
+ * at /content/<slug>/<locale> (draft: /content/<slug>/<locale>/draft).
+ * `getCmsData(locale)` requests the localized manifest and falls back to
+ * the default-locale endpoint when that locale is not enabled yet in the
+ * CMS (the backend answers 404 "Locale not configured"), so the site keeps
+ * rendering while languages are being rolled out in the dashboard.
  *
  * Each Server Component imports `getCmsData()` to fetch all services in one
  * round trip; Next.js' fetch cache + ISR (revalidate=60) keeps it cheap.
@@ -56,30 +63,55 @@ export type CmsService =
 export interface CmsContent {
   project_slug: string;
   project_name: string;
+  locale?: string;
   last_updated: string | null;
   content: Record<string, CmsService>;
 }
 
-/** Fetches the entire CMS manifest. ISR cached for 60s. */
-export async function getCmsData(): Promise<CmsContent> {
+/** Splits the env endpoint into its base URL and preview flag.
+ *  The env var is the FULL default-locale URL (optionally ending in /draft);
+ *  localized URLs are derived from it, keeping existing Vercel env vars
+ *  working unchanged. */
+function endpointParts(): { base: string; preview: boolean } {
   if (!ENDPOINT) {
     throw new Error(
       "NEXT_PUBLIC_CMS_ENDPOINT env var is not set. Configure it on Vercel.",
     );
   }
+  const preview = ENDPOINT.endsWith("/draft");
+  const base = preview ? ENDPOINT.slice(0, -"/draft".length) : ENDPOINT;
+  return { base, preview };
+}
 
-  const isPreview = !!PREVIEW_TOKEN;
-  const res = await fetch(ENDPOINT, {
-    headers: PREVIEW_TOKEN ? { "X-CMS-Preview-Token": PREVIEW_TOKEN } : {},
+async function fetchManifest(url: string, preview: boolean): Promise<Response> {
+  return fetch(url, {
+    headers:
+      preview && PREVIEW_TOKEN ? { "X-CMS-Preview-Token": PREVIEW_TOKEN } : {},
     // Preview/draft → always fresh. Production → 60s ISR cache.
-    cache: isPreview ? "no-store" : undefined,
-    next: isPreview ? undefined : { revalidate: 60 },
+    cache: preview ? "no-store" : undefined,
+    next: preview ? undefined : { revalidate: 60 },
   });
+}
 
+/** Fetches the CMS manifest for a locale (falls back to the default-locale
+ *  manifest when the locale is not enabled in the CMS). ISR cached for 60s. */
+export async function getCmsData(locale?: string): Promise<CmsContent> {
+  const { base, preview } = endpointParts();
+
+  if (locale) {
+    const localizedUrl = `${base}/${locale}${preview ? "/draft" : ""}`;
+    const res = await fetchManifest(localizedUrl, preview);
+    if (res.ok) return (await res.json()) as CmsContent;
+    if (res.status !== 404) {
+      throw new Error(`CMS fetch failed: ${res.status} ${res.statusText}`);
+    }
+    // 404 → locale not configured in the CMS yet; fall through to default.
+  }
+
+  const res = await fetchManifest(ENDPOINT as string, preview);
   if (!res.ok) {
     throw new Error(`CMS fetch failed: ${res.status} ${res.statusText}`);
   }
-
   return (await res.json()) as CmsContent;
 }
 
@@ -159,6 +191,9 @@ export function contactInfo(content: CmsContent): ContactInfo {
 export interface KeyFeature {
   title: string;
   description: string;
+  /** Optional CMS-selected animation scene for the feature card
+   *  (see `src/data/scenes.ts` for the predefined set). */
+  animation?: string;
 }
 
 export function keyFeatures(content: CmsContent): KeyFeature[] {
@@ -166,11 +201,17 @@ export function keyFeatures(content: CmsContent): KeyFeature[] {
 }
 
 export interface ServiceCatalogItem {
+  /** Stable CMS item id (present on newer manifests; used to match the
+   *  same service across locales when slugs are translated). */
+  _id?: string;
   slug: string;
   title: string;
   short_description: string;
   full_description: string;
   features: string[];
+  /** Optional CMS-selected animation scene for the service card
+   *  (see `src/data/scenes.ts` for the predefined set). */
+  animation?: string;
 }
 
 export function servicesCatalog(content: CmsContent): ServiceCatalogItem[] {

@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import ServicesDropdown from "./ServicesDropdown";
+import { resolveContactCards } from "@/lib/contactFields";
 import type { ContactInfo } from "@/lib/cms";
 import type { Service } from "@/data/services";
 
@@ -16,7 +17,16 @@ interface FooterProps {
   logoAlt: string;
 }
 
-export default function Footer({ description, contact, services, brandName, logoUrl, logoAlt }: FooterProps) {
+export default function Footer({
+  description,
+  contact,
+  services,
+  brandName,
+  logoUrl,
+  logoAlt,
+}: FooterProps) {
+  const t = useTranslations("nav");
+  const tFooter = useTranslations("footer");
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,24 +40,31 @@ export default function Footer({ description, contact, services, brandName, logo
         setDropdownOpen(false);
       }
     }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setDropdownOpen(false);
+    }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
   }, []);
 
   const linkClass = (href: string) =>
     `text-sm font-medium transition-colors ${
-      pathname === href
-        ? "text-[#fc1717]"
-        : "text-white hover:text-[#fc1717]"
+      pathname === href ? "text-[#fc1717]" : "text-white hover:text-[#49d4fc]"
     }`;
 
-  const phoneHref = contact.phone ? `tel:${contact.phone.replace(/\s/g, "")}` : undefined;
-  const addressHref = contact.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`
-    : undefined;
+  const displayBrand = brandName.replace(/\s+S\.?R\.?L\.?\s*$/i, "").trim();
+  const brandWords = displayBrand.split(/\s+/);
+  const brandBase = brandWords.slice(0, -1).join(" ");
+  const brandAccent = brandWords.length > 1 ? brandWords[brandWords.length - 1] : "";
+
+  const cards = resolveContactCards(contact);
 
   return (
-    <footer className="bg-[#316936] py-12">
+    <footer className="bg-footer-bar py-12">
       <div className="container-main">
         <div className="grid gap-10 md:grid-cols-3">
           {/* Brand */}
@@ -56,10 +73,15 @@ export default function Footer({ description, contact, services, brandName, logo
               <img
                 src={logoUrl}
                 alt={logoAlt}
+                width={64}
+                height={64}
                 className="h-16 w-16 object-contain drop-shadow-md"
               />
-              <span className="text-xl font-bold tracking-wide text-white">
-                IT GLOBAL<span className="text-[#49d4fc]"> SERVICES</span>
+              <span className="text-xl font-bold uppercase tracking-wide text-white">
+                {brandBase || displayBrand}
+                {brandAccent && (
+                  <span className="text-[#49d4fc]"> {brandAccent}</span>
+                )}
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
@@ -70,23 +92,25 @@ export default function Footer({ description, contact, services, brandName, logo
           {/* Navigation */}
           <div>
             <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
-              Navigation
+              {tFooter("navigation")}
             </h4>
-            <nav className="flex flex-col gap-3">
+            <nav className="flex flex-col gap-3" aria-label={tFooter("navigation")}>
               <Link href="/" className={linkClass("/")}>
-                Home
+                {t("home")}
               </Link>
 
               <div ref={dropdownRef} className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
+                  aria-expanded={dropdownOpen}
+                  aria-haspopup="menu"
                   className={`flex cursor-pointer items-center gap-1 text-sm font-medium transition-colors ${
                     pathname.startsWith("/services")
                       ? "text-[#fc1717]"
-                      : "text-white hover:text-[#fc1717]"
+                      : "text-white hover:text-[#49d4fc]"
                   }`}
                 >
-                  Services
+                  {t("services")}
                   <svg
                     className={`h-3.5 w-3.5 transition-transform ${
                       dropdownOpen ? "rotate-180" : ""
@@ -95,6 +119,7 @@ export default function Footer({ description, contact, services, brandName, logo
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2.5}
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -112,10 +137,10 @@ export default function Footer({ description, contact, services, brandName, logo
               </div>
 
               <Link href="/about" className={linkClass("/about")}>
-                About Us
+                {t("about")}
               </Link>
               <Link href="/contact" className={linkClass("/contact")}>
-                Contact
+                {t("contact")}
               </Link>
             </nav>
           </div>
@@ -123,26 +148,29 @@ export default function Footer({ description, contact, services, brandName, logo
           {/* Contact info — driven by CMS contact_info */}
           <div>
             <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
-              Contact
+              {tFooter("contact")}
             </h4>
             <div className="space-y-2 text-sm text-white/80">
-              {phoneHref && (
-                <a
-                  href={phoneHref}
-                  className="block transition-colors duration-200 hover:text-white"
-                >
-                  {contact.phone}
-                </a>
-              )}
-              {addressHref && contact.address && (
-                <a
-                  href={addressHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block transition-colors duration-200 hover:text-white"
-                >
-                  {contact.address}
-                </a>
+              {cards.map((card) =>
+                card.href ? (
+                  <a
+                    key={card.key}
+                    href={card.href}
+                    target={card.href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      card.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    className="block transition-colors duration-200 hover:text-white"
+                  >
+                    {card.value}
+                  </a>
+                ) : (
+                  <p key={card.key} className="block">
+                    {card.value}
+                  </p>
+                ),
               )}
             </div>
           </div>
@@ -150,7 +178,7 @@ export default function Footer({ description, contact, services, brandName, logo
 
         {/* Bottom bar */}
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} {brandName}. All rights reserved.
+          © {new Date().getFullYear()} {brandName}. {tFooter("rights")}
         </div>
       </div>
     </footer>
