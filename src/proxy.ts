@@ -2,8 +2,9 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 /** Locale negotiation proxy (Next 16 name for middleware). Serves the
- *  default locale (ro) unprefixed and /en, /hu prefixed; locale detection
- *  is disabled in `routing` so `/` is always Romanian. */
+ *  default locale (ro) unprefixed and every other locale prefixed
+ *  (/en, /hu, /de, /fr, /it); locale detection is disabled in `routing`
+ *  so `/` is always Romanian. */
 export default createMiddleware(routing);
 
 export const config = {

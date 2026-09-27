@@ -27,7 +27,7 @@ const inter = Inter({
 });
 
 /** Applies the persisted / system theme before first paint (no flash). */
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","light")}})();`;
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t);var c=t==="dark"?"#142845":"#2A5088";var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement("meta");m.setAttribute("name","theme-color");document.head.appendChild(m)}m.setAttribute("content",c)}catch(e){document.documentElement.setAttribute("data-theme","light")}})();`;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -74,10 +74,13 @@ export async function generateMetadata({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#2A5088" },
-    { media: "(prefers-color-scheme: dark)", color: "#142845" },
-  ],
+  // NB: no `themeColor` here on purpose. The inline theme script creates and
+  // owns the single <meta name="theme-color">, and ThemeToggle updates it, so
+  // it always matches the ACTIVE site theme's header (`data-theme`) rather than
+  // the OS colour scheme. Keeping it out of React/Next metadata avoids a second
+  // conflicting tag — otherwise the mobile status bar mismatches the header
+  // when the visitor picks a theme differing from their OS, showing a strip
+  // above the nav.
 };
 
 export default async function LocaleLayout({

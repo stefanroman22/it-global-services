@@ -2,7 +2,7 @@ import { defineRouting } from "next-intl/routing";
 
 /**
  * Site locales. Romanian is the default and lives at the bare path (`/`);
- * English and Hungarian are prefixed (`/en`, `/hu`).
+ * every other locale is prefixed (`/en`, `/hu`, `/de`, `/fr`, `/it`).
  *
  * These MUST mirror the locales enabled for the project in the Roman
  * Technologies CMS (`projects.locales`, managed in the dashboard Languages
@@ -11,7 +11,7 @@ import { defineRouting } from "next-intl/routing";
  * to the default-locale manifest so the site never breaks.
  */
 export const routing = defineRouting({
-  locales: ["ro", "en", "hu"],
+  locales: ["ro", "en", "hu", "de", "fr", "it"],
   defaultLocale: "ro",
   localePrefix: "as-needed",
   // `/` is ALWAYS Romanian (the site's required default) — no Accept-Language

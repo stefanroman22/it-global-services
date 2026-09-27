@@ -42,6 +42,13 @@ export default function ThemeToggle({
   function toggle() {
     const next: Theme = readTheme() === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
+    // Keep the mobile status-bar colour matched to the header of the active
+    // theme so no mismatched strip shows above the nav (must track the toggle,
+    // not the OS `prefers-color-scheme`).
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute("content", next === "dark" ? "#142845" : "#2A5088");
+    }
     try {
       localStorage.setItem("theme", next);
     } catch {

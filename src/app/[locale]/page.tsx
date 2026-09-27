@@ -45,6 +45,9 @@ export default async function HomePage({
   const tagline = textBlock(cms, "general_tagline").title || t("tagline");
   const heroSubhead = textBlock(cms, "home_hero_subhead").body ?? "";
   const logo = image(cms, "general_logo");
+  // Distinct hero picture, editable in the CMS; falls back to the brand
+  // logo when the operator has not uploaded a separate hero image yet.
+  const heroImage = image(cms, "home_hero_image");
   const services = servicesCatalog(cms).map(toService);
   const features = keyFeatures(cms);
   const contact = contactInfo(cms);
@@ -67,8 +70,8 @@ export default async function HomePage({
         tagline={baseTagline}
         taglineAccent={accent}
         subhead={heroSubhead}
-        logoUrl={logo.url ?? "/company-logo.png"}
-        logoAlt={logo.alt ?? t("brandName")}
+        imageUrl={heroImage.url ?? logo.url ?? "/company-logo.png"}
+        imageAlt={heroImage.alt ?? logo.alt ?? t("brandName")}
       />
       <ServicesGrid
         services={services}

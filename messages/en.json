@@ -63,7 +63,10 @@
     "label": "Language",
     "ro": "Română",
     "en": "English",
-    "hu": "Magyar"
+    "hu": "Magyar",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano"
   },
   "theme": {
     "toLight": "Switch to light theme",

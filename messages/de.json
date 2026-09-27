@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "services": "Leistungen",
+    "about": "Über uns",
+    "contact": "Kontakt"
+  },
+  "common": {
+    "skipToContent": "Zum Inhalt springen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "loading": "Lädt…",
+    "learnMore": "Mehr erfahren",
+    "backToTop": "Nach oben"
+  },
+  "hero": {
+    "ctaPrimary": "Kostenlose Beratung anfordern",
+    "ctaSecondary": "Unsere Leistungen",
+    "scrollCue": "Zu den Leistungen scrollen"
+  },
+  "service": {
+    "whatWeOffer": "Was wir bieten",
+    "interestedIn": "Interesse an {title}?",
+    "backToServices": "Alle Leistungen",
+    "otherServices": "Weitere Leistungen"
+  },
+  "form": {
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "message": "Nachricht",
+    "namePlaceholder": "Ihr Name",
+    "emailPlaceholder": "sie@beispiel.de",
+    "phonePlaceholder": "+40 700 000 000",
+    "messagePlaceholder": "Beschreiben Sie Ihr Problem oder Ihre Frage…",
+    "nameRequired": "Name ist erforderlich.",
+    "emailRequired": "E-Mail ist erforderlich.",
+    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "messageRequired": "Nachricht ist erforderlich.",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "sendingTitle": "Wird gesendet…",
+    "sendingBody": "Ihre Nachricht ist unterwegs.",
+    "sentTitle": "Nachricht gesendet!",
+    "sentBody": "Vielen Dank für Ihre Nachricht. Wir melden uns in Kürze bei Ihnen.",
+    "errorBody": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
+    "contactInfoHeading": "Kontaktdaten",
+    "requiredHint": "Pflichtfeld"
+  },
+  "contactCards": {
+    "emailUs": "Schreiben Sie uns",
+    "callUs": "Rufen Sie uns an",
+    "visitUs": "Besuchen Sie uns",
+    "businessHours": "Öffnungszeiten",
+    "website": "Website"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "contact": "Kontakt",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "lang": {
+    "label": "Sprache",
+    "ro": "Română",
+    "en": "English",
+    "hu": "Magyar",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano"
+  },
+  "theme": {
+    "toLight": "Zum hellen Design wechseln",
+    "toDark": "Zum dunklen Design wechseln"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "body": "Entschuldigung, die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite"
+  },
+  "fallbacks": {
+    "brandName": "IT Global Services SRL",
+    "metaDescription": "Computer- und Laptop-Reparatur, Windows-Installation, Peripheriegeräte, Datenrettung und IT-Fernwartung — in Cluj-Napoca und in ganz Rumänien.",
+    "tagline": "IT-Lösungen für Sie und Ihr Unternehmen",
+    "servicesHeader": "Unsere Leistungen",
+    "whyHeader": "Warum uns wählen",
+    "whyEyebrow": "Warum wir",
+    "aboutTitle": "Über uns",
+    "contactTitle": "Kontakt",
+    "formHeading": "Senden Sie uns eine Nachricht",
+    "footerDescription": "Ihr zuverlässiger Partner für umfassende IT-Dienstleistungen.",
+    "ctaHeading": "Fragen zu Ihrer IT? Sprechen wir darüber."
+  },
+  "cta": {
+    "button": "Loslegen"
+  }
+}

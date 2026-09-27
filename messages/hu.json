@@ -63,7 +63,10 @@
     "label": "Nyelv",
     "ro": "Română",
     "en": "English",
-    "hu": "Magyar"
+    "hu": "Magyar",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano"
   },
   "theme": {
     "toLight": "Váltás világos témára",

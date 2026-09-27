@@ -63,7 +63,10 @@
     "label": "Limbă",
     "ro": "Română",
     "en": "English",
-    "hu": "Magyar"
+    "hu": "Magyar",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano"
   },
   "theme": {
     "toLight": "Comută pe tema luminoasă",

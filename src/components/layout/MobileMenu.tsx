@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import type { Service } from "@/data/services";
 
 interface MobileMenuProps {
@@ -173,11 +172,6 @@ export default function MobileMenu({
             >
               {t("contact")}
             </Link>
-
-            {/* Language selector pinned under the nav */}
-            <div className="mt-6 border-t border-white/15 pt-5">
-              <LanguageSwitcher />
-            </div>
           </motion.nav>
         </>
       )}

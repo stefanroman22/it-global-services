@@ -193,6 +193,7 @@ export default function Header({
         {/* Mobile controls */}
         <div className="flex items-center gap-1 md:hidden">
           <ThemeToggle />
+          <LanguageSwitcher />
           <button
             onClick={() => setMobileOpen(true)}
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10"
