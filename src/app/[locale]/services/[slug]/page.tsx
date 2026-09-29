@@ -11,6 +11,7 @@ import {
   type ServiceCatalogItem,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
+import { plainText } from "@/lib/cms-rich-text";
 import { SetRouteAlternates } from "@/components/providers/RouteAlternatesProvider";
 import ServicePageContent from "./ServicePageContent";
 
@@ -74,8 +75,8 @@ export async function generateMetadata({
   const item = catalog[index];
   const paths = await serviceAlternates(locale as Locale, item, index);
   return {
-    title: item.title,
-    description: item.short_description,
+    title: plainText(item.title),
+    description: plainText(item.short_description, { format: "rich" }),
     alternates: localeAlternates(locale as Locale, `/services/${slug}`, paths),
   };
 }

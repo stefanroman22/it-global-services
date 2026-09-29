@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import ServiceScene from "@/components/ui/ServiceScene";
 import type { Service } from "@/data/services";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface ServicesDropdownProps {
   open: boolean;
@@ -79,7 +80,12 @@ export default function ServicesDropdown({
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white/10">
                   <ServiceScene scene={s.scene} size={17} />
                 </span>
-                {s.title}
+                <RichText
+                  value={s.title}
+                  format="inline"
+                  links={false}
+                  className="cms-inv"
+                />
               </Link>
             ))}
           </div>

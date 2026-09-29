@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SupportDeskIllustration } from "@/components/ui/Illustrations";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface CtaBandProps {
   heading: string;
@@ -37,7 +38,7 @@ export default function CtaBand({ heading, phone }: CtaBandProps) {
             className="text-center md:text-left"
           >
             <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">
-              {heading}
+              <RichText value={heading} format="inline" className="cms-inv-bar" />
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
               <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>

@@ -8,6 +8,7 @@ import MobileMenu from "./MobileMenu";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import type { Service } from "@/data/services";
+import { plainText } from "@/lib/cms-rich-text";
 
 interface HeaderProps {
   services: Service[];
@@ -19,7 +20,7 @@ interface HeaderProps {
 /** Splits the CMS brand name into a wordmark: last word gets the cyan
  *  accent; a trailing legal suffix (SRL) is dropped from the display. */
 function wordmarkParts(brandName: string): { base: string; accent: string } {
-  const display = brandName.replace(/\s+S\.?R\.?L\.?\s*$/i, "").trim();
+  const display = plainText(brandName).replace(/\s+S\.?R\.?L\.?\s*$/i, "").trim();
   const words = display.split(/\s+/);
   if (words.length < 2) return { base: display, accent: "" };
   return {

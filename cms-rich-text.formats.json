@@ -1,0 +1,11 @@
+{
+  "repeaters": {
+    "key_features": { "title": "inline", "description": "richtext" },
+    "services_catalog": {
+      "title": "inline",
+      "short_description": "richtext",
+      "full_description": "richtext"
+    }
+  },
+  "key_values": {}
+}

@@ -7,6 +7,7 @@ import ServicesDropdown from "./ServicesDropdown";
 import { resolveContactCards } from "@/lib/contactFields";
 import type { ContactInfo } from "@/lib/cms";
 import type { Service } from "@/data/services";
+import { RichText, plainText } from "@/lib/cms-rich-text";
 
 interface FooterProps {
   description: string;
@@ -56,7 +57,8 @@ export default function Footer({
       pathname === href ? "text-[#fc1717]" : "text-white hover:text-[#49d4fc]"
     }`;
 
-  const displayBrand = brandName.replace(/\s+S\.?R\.?L\.?\s*$/i, "").trim();
+  const plainBrand = plainText(brandName);
+  const displayBrand = plainBrand.replace(/\s+S\.?R\.?L\.?\s*$/i, "").trim();
   const brandWords = displayBrand.split(/\s+/);
   const brandBase = brandWords.slice(0, -1).join(" ");
   const brandAccent = brandWords.length > 1 ? brandWords[brandWords.length - 1] : "";
@@ -84,9 +86,12 @@ export default function Footer({
                 )}
               </span>
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
-              {description}
-            </p>
+            <RichText
+              value={description}
+              format="rich"
+              headingOffset={2}
+              className="cms-inv mt-3 max-w-xs text-sm leading-relaxed text-white/70"
+            />
           </div>
 
           {/* Navigation */}
@@ -178,7 +183,7 @@ export default function Footer({
 
         {/* Bottom bar */}
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} {brandName}. {tFooter("rights")}
+          © {new Date().getFullYear()} {plainBrand}. {tFooter("rights")}
         </div>
       </div>
     </footer>

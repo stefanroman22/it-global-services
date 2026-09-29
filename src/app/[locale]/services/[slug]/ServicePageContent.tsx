@@ -7,6 +7,7 @@ import ContactForm from "@/components/ui/ContactForm";
 import ServiceScene from "@/components/ui/ServiceScene";
 import type { Service } from "@/data/services";
 import type { ContactInfo } from "@/lib/cms";
+import { RichText, plainText } from "@/lib/cms-rich-text";
 
 interface Props {
   service: Service;
@@ -60,7 +61,7 @@ export default function ServicePageContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {service.title}
+            <RichText value={service.title} format="inline" />
           </motion.h1>
         </div>
       </section>
@@ -82,9 +83,11 @@ export default function ServicePageContent({
             >
               <ServiceScene scene={service.scene} size={96} />
             </motion.div>
-            <p className="text-base leading-relaxed text-ink opacity-80 md:text-lg">
-              {service.fullDescription}
-            </p>
+            <RichText
+              value={service.fullDescription}
+              format="rich"
+              className="text-base leading-relaxed text-ink opacity-80 md:text-lg"
+            />
           </motion.div>
 
           <motion.div
@@ -147,7 +150,7 @@ export default function ServicePageContent({
                         <span className="text-ink opacity-70 transition-opacity group-hover:opacity-100">
                           <ServiceScene scene={s.scene} size={26} />
                         </span>
-                        {s.title}
+                        <RichText value={s.title} format="inline" links={false} />
                         <svg
                           className="ml-auto h-4 w-4 shrink-0 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-60"
                           fill="none"
@@ -170,7 +173,7 @@ export default function ServicePageContent({
 
       {/* Contact form */}
       <ContactForm
-        heading={t("interestedIn", { title: service.title })}
+        heading={t("interestedIn", { title: plainText(service.title) })}
         contact={contact}
       />
     </div>

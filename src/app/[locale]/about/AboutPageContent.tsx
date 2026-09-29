@@ -7,6 +7,7 @@ import ServiceScene from "@/components/ui/ServiceScene";
 import { SecureWorkspaceIllustration } from "@/components/ui/Illustrations";
 import { featureScene } from "@/data/scenes";
 import type { ContactInfo, KeyFeature } from "@/lib/cms";
+import { RichText, plainText } from "@/lib/cms-rich-text";
 
 interface AboutPageContentProps {
   bannerTitle: string;
@@ -18,41 +19,6 @@ interface AboutPageContentProps {
   formHeading: string;
   features: KeyFeature[];
   contact: ContactInfo;
-}
-
-/** Render markdown-ish body text: paragraphs separated by blank lines, "##"
- *  lines become H2, **bold** spans converted. Keeps the editor friendly while
- *  matching the original layout's visual hierarchy. */
-function RichBody({ text }: { text: string }) {
-  const blocks = text.split(/\n\s*\n/);
-  return (
-    <>
-      {blocks.map((block, i) => {
-        const trimmed = block.trim();
-        if (!trimmed) return null;
-        if (trimmed.startsWith("## ")) {
-          return (
-            <h2 key={i} className="pt-4 text-2xl font-bold">
-              {trimmed.slice(3).trim()}
-            </h2>
-          );
-        }
-        // Replace **bold** segments
-        const parts = trimmed.split(/(\*\*[^*]+\*\*)/g);
-        return (
-          <p key={i}>
-            {parts.map((p, j) =>
-              p.startsWith("**") && p.endsWith("**") ? (
-                <strong key={j}>{p.slice(2, -2)}</strong>
-              ) : (
-                <span key={j}>{p}</span>
-              ),
-            )}
-          </p>
-        );
-      })}
-    </>
-  );
 }
 
 export default function AboutPageContent({
@@ -91,11 +57,14 @@ export default function AboutPageContent({
             </motion.div>
             <div>
               <h2 className="mb-2 text-xl font-bold text-ink md:text-2xl">
-                {introHeading}
+                <RichText value={introHeading} format="inline" />
               </h2>
-              <p className="text-base leading-relaxed text-ink opacity-80">
-                {introBody}
-              </p>
+              <RichText
+                value={introBody}
+                format="rich"
+                headingOffset={1}
+                className="text-base leading-relaxed text-ink opacity-80"
+              />
             </div>
           </motion.div>
 
@@ -105,13 +74,19 @@ export default function AboutPageContent({
             transition={{ duration: 0.5, delay: 0.15 }}
             className="max-w-3xl space-y-6 text-lg leading-relaxed"
           >
-            <RichBody text={mainBody} />
+            <RichText
+              value={mainBody}
+              format="rich"
+              className="about-rich"
+            />
 
-            <h2 className="pt-6 text-2xl font-bold">{pillarsHeader}</h2>
+            <h2 className="pt-6 text-2xl font-bold">
+              <RichText value={pillarsHeader} format="inline" />
+            </h2>
             <div className="grid gap-x-12 gap-y-8 pt-2 sm:grid-cols-2">
               {pillars.map((p, i) => (
                 <motion.div
-                  key={p.title}
+                  key={plainText(p.title) || i}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "0px 0px 200px 0px" }}
@@ -120,15 +95,20 @@ export default function AboutPageContent({
                 >
                   <div className="shrink-0 text-ink">
                     <ServiceScene
-                      scene={featureScene(p.animation, p.title, i)}
+                      scene={featureScene(p.animation, plainText(p.title), i)}
                       size={44}
                     />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-bold">{p.title}</h3>
-                    <p className="text-sm leading-relaxed opacity-75">
-                      {p.description}
-                    </p>
+                    <h3 className="mb-1 font-bold">
+                      <RichText value={p.title} format="inline" />
+                    </h3>
+                    <RichText
+                      value={p.description}
+                      format="rich"
+                      headingOffset={1}
+                      className="text-sm leading-relaxed opacity-75"
+                    />
                   </div>
                 </motion.div>
               ))}
@@ -137,7 +117,10 @@ export default function AboutPageContent({
         </div>
       </section>
 
-      <ContactForm heading={formHeading} contact={contact} />
+      <ContactForm
+        heading={<RichText value={formHeading} format="inline" />}
+        contact={contact}
+      />
     </div>
   );
 }

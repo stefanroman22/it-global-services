@@ -7,6 +7,7 @@ import ContactForm from "@/components/ui/ContactForm";
 import { SupportDeskIllustration } from "@/components/ui/Illustrations";
 import type { ContactInfo } from "@/lib/cms";
 import { resolveContactCards } from "@/lib/contactFields";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface ContactPageContentProps {
   bannerTitle: string;
@@ -116,7 +117,10 @@ export default function ContactPageContent({
         </div>
       </section>
 
-      <ContactForm heading={formHeading} contact={contact} />
+      <ContactForm
+        heading={<RichText value={formHeading} format="inline" />}
+        contact={contact}
+      />
     </div>
   );
 }

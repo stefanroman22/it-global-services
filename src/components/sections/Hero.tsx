@@ -4,11 +4,11 @@ import { Fragment } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { RichText, splitRichWords } from "@/lib/cms-rich-text";
 
 interface HeroProps {
-  /** Tagline (the white-then-accent headline) — first segment is the white part, second is accent. */
+  /** Tagline (the white-then-accent headline) — the last two words are the accent. */
   tagline: string;
-  taglineAccent?: string;
   subhead: string;
   /** Hero picture — a distinct CMS image, falling back to the brand logo. */
   imageUrl: string;
@@ -57,7 +57,6 @@ function DriftField({ anim }: { anim: boolean }) {
 
 export default function Hero({
   tagline,
-  taglineAccent,
   subhead,
   imageUrl,
   imageAlt,
@@ -66,7 +65,10 @@ export default function Hero({
   const reduced = useReducedMotion();
   const anim = !reduced;
 
-  const words = tagline.split(/\s+/).filter(Boolean);
+  // Last two words take the accent (as one unit), the rest are the white base.
+  const allWords = splitRichWords(tagline);
+  const words = allWords.length > 1 ? allWords.slice(0, -2) : allWords;
+  const accentWords = allWords.length > 1 ? allWords.slice(-2) : [];
 
   return (
     <section className="relative overflow-hidden pb-10 pt-16 md:pb-14 md:pt-24">
@@ -75,9 +77,10 @@ export default function Hero({
       <div className="container-main relative">
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
-            <h1 className="mb-6 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+            <h1 className="cms-rich cms-rich--inline cms-inv mb-6 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
               {words.map((word, i) => (
-                <Fragment key={`${word}-${i}`}>
+                <Fragment key={word.key}>
+                  {word.breakBefore && i > 0 && <br />}
                   {/* Space lives OUTSIDE the inline-block span — trailing
                       whitespace inside one gets stripped by CSS. */}
                   <motion.span
@@ -90,11 +93,11 @@ export default function Hero({
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    {word}
+                    {word.node}
                   </motion.span>{" "}
                 </Fragment>
               ))}
-              {taglineAccent && (
+              {accentWords.length > 0 && (
                 <motion.span
                   className="inline-block text-[#49d4fc]"
                   initial={{ opacity: 0, y: 26 }}
@@ -105,19 +108,24 @@ export default function Hero({
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  {taglineAccent}
+                  {accentWords.map((word, i) => (
+                    <Fragment key={word.key}>
+                      {i > 0 && (word.breakBefore ? <br /> : " ")}
+                      {word.node}
+                    </Fragment>
+                  ))}
                 </motion.span>
               )}
             </h1>
 
-            <motion.p
+            <motion.div
               className="mb-8 max-w-lg text-lg leading-relaxed text-white/85"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45, ease: "easeOut" }}
             >
-              {subhead}
-            </motion.p>
+              <RichText value={subhead} format="rich" className="cms-inv" />
+            </motion.div>
 
             <motion.div
               className="flex flex-wrap gap-4"

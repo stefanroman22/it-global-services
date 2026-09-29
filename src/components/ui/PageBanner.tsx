@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import ServiceScene from "./ServiceScene";
 import type { SceneKey } from "@/data/scenes";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface PageBannerProps {
   title: string;
@@ -34,16 +35,18 @@ export default function PageBanner({ title, subtitle, scene }: PageBannerProps) 
           )}
 
           <div>
-            <h1 className="section-title !mb-0">{title}</h1>
+            <h1 className="section-title !mb-0">
+              <RichText value={title} format="inline" />
+            </h1>
             {subtitle && (
-              <motion.p
+              <motion.div
                 className="mt-2 max-w-2xl text-base opacity-75 md:text-lg"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 0.75, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                {subtitle}
-              </motion.p>
+                <RichText value={subtitle} format="rich" />
+              </motion.div>
             )}
           </div>
         </motion.div>

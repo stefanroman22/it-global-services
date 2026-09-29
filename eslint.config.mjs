@@ -6,7 +6,7 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   {
-    ignores: [".next/**", "node_modules/**", "out/**"],
+    ignores: [".next/**", "node_modules/**", "out/**", "src/lib/cms-rich-text/**"],
   },
   {
     rules: {

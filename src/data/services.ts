@@ -10,6 +10,7 @@
 import type { SceneKey } from "@/data/scenes";
 import { serviceScene } from "@/data/scenes";
 import type { ServiceCatalogItem } from "@/lib/cms";
+import { plainText } from "@/lib/cms-rich-text";
 
 export interface Service {
   slug: string;
@@ -29,6 +30,6 @@ export function toService(item: ServiceCatalogItem): Service {
     shortDescription: item.short_description,
     fullDescription: item.full_description,
     features: item.features ?? [],
-    scene: serviceScene(item.animation, item.slug, item.title),
+    scene: serviceScene(item.animation, item.slug, plainText(item.title)),
   };
 }

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import ServiceCard from "@/components/ui/ServiceCard";
 import type { Service } from "@/data/services";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface ServicesGridProps {
   services: Service[];
@@ -25,8 +26,15 @@ export default function ServicesGrid({
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="section-title text-white">{header}</h2>
-          <p className="section-subtitle mx-auto text-white/75">{subhead}</p>
+          <h2 className="section-title text-white">
+            <RichText value={header} format="inline" className="cms-inv" />
+          </h2>
+          <RichText
+            as="div"
+            value={subhead}
+            format="rich"
+            className="section-subtitle cms-inv mx-auto text-white/75"
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

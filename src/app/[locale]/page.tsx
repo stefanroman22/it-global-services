@@ -55,20 +55,10 @@ export default async function HomePage({
     /^\+?[\d\s().-]{6,}$/.test(v.trim()),
   );
 
-  // Tagline split: take last word as the accent, rest as base
-  let baseTagline = tagline;
-  let accent: string | undefined;
-  const words = tagline.split(/\s+/);
-  if (words.length > 1) {
-    accent = words.slice(-2).join(" ");
-    baseTagline = words.slice(0, -2).join(" ");
-  }
-
   return (
     <div className="page-home">
       <Hero
-        tagline={baseTagline}
-        taglineAccent={accent}
+        tagline={tagline}
         subhead={heroSubhead}
         imageUrl={heroImage.url ?? logo.url ?? "/company-logo.png"}
         imageAlt={heroImage.alt ?? logo.alt ?? t("brandName")}

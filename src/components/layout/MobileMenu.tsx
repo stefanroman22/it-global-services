@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import type { Service } from "@/data/services";
+import { RichText, plainText } from "@/lib/cms-rich-text";
 
 interface MobileMenuProps {
   open: boolean;
@@ -79,7 +80,7 @@ export default function MobileMenu({
                 className="h-11 w-11 shrink-0 object-contain"
               />
               <span className="truncate text-base font-bold uppercase tracking-wide text-white">
-                {brandName.replace(/\s+S\.?R\.?L\.?\s*$/i, "")}
+                {plainText(brandName).replace(/\s+S\.?R\.?L\.?\s*$/i, "")}
               </span>
             </Link>
             <button
@@ -153,7 +154,12 @@ export default function MobileMenu({
                             : "text-white/80 hover:text-white"
                         }`}
                       >
-                        {s.title}
+                        <RichText
+                          value={s.title}
+                          format="inline"
+                          links={false}
+                          className="cms-inv"
+                        />
                       </Link>
                     ))}
                   </div>

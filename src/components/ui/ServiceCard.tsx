@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ServiceScene from "./ServiceScene";
 import type { Service } from "@/data/services";
+import { RichText } from "@/lib/cms-rich-text";
 
 interface ServiceCardProps {
   service: Service;
@@ -33,12 +34,21 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
         </div>
 
         <h3 className="mb-2 text-lg font-bold leading-snug text-[#49d4fc] transition-colors group-hover:text-white">
-          {service.title}
+          <RichText
+            value={service.title}
+            format="inline"
+            links={false}
+            className="cms-inv"
+          />
         </h3>
 
-        <p className="text-sm leading-relaxed text-[#f2f8fc]">
-          {service.shortDescription}
-        </p>
+        <RichText
+          value={service.shortDescription}
+          format="rich"
+          links={false}
+          headingOffset={1}
+          className="cms-inv text-sm leading-relaxed text-[#f2f8fc]"
+        />
 
         <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#49d4fc] opacity-0 transition-all duration-300 group-hover:opacity-100">
           {t("learnMore")}

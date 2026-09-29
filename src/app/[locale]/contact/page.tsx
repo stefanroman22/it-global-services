@@ -6,6 +6,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { localeAlternates } from "@/lib/site";
 import ContactPageContent from "./ContactPageContent";
 import { getCmsData, textBlock, contactInfo } from "@/lib/cms";
+import { plainText } from "@/lib/cms-rich-text";
 
 export async function generateMetadata({
   params,
@@ -19,10 +20,16 @@ export async function generateMetadata({
     getTranslations({ locale, namespace: "fallbacks" }),
   ]);
   return {
-    title: textBlock(cms, "contact_banner_title").title || t("contactTitle"),
+    title:
+      plainText(textBlock(cms, "contact_banner_title").title) ||
+      t("contactTitle"),
     description:
-      textBlock(cms, "contact_banner_subtitle").body ||
-      textBlock(cms, "general_meta_description").body ||
+      plainText(textBlock(cms, "contact_banner_subtitle").body, {
+        format: "rich",
+      }) ||
+      plainText(textBlock(cms, "general_meta_description").body, {
+        format: "rich",
+      }) ||
       t("metaDescription"),
     alternates: localeAlternates(locale as Locale, "/contact"),
   };

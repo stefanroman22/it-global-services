@@ -304,3 +304,68 @@
   --z-modal: 60;
   --z-overlay: 100;
 }
+
+/* ===== CMS rich text theme (--cms-rich-* consumed by lib/cms-rich-text) =====
+   Default surface: light pages/cards (ink text). Inverted surfaces opt in
+   through .cms-inv (white text on navy/blue/green) and .cms-inv-bar (navy
+   bars where cyan reaches 4.5:1). */
+:root {
+  --cms-rich-strong: var(--ink);
+  --cms-rich-strong-weight: 700;
+  --cms-rich-em: inherit;
+  --cms-rich-link: #2a5088; /* 8.07:1 on white, 6.16:1 on the lightest tint */
+  --cms-rich-link-hover: #074285;
+  --cms-rich-marker: #2a5088;
+  --cms-rich-quote-border: #2a5088;
+  --cms-rich-rule: #2a5088;
+}
+
+[data-theme="dark"] {
+  --cms-rich-strong: #ffffff;
+  --cms-rich-link: #49d4fc; /* >= 8.3:1 on every dark surface */
+  --cms-rich-link-hover: #ffffff;
+  --cms-rich-marker: #49d4fc;
+  --cms-rich-quote-border: #49d4fc;
+  --cms-rich-rule: #49d4fc;
+}
+
+/* Inverted surfaces, light theme: hero, services grid, service cards, footer.
+   Cyan fails 4.5:1 here (#3a70a9 2.97, #316936 3.78, mid-gradient 1.4), so bold is
+   the surrounding white plus weight, and links stay white. */
+.cms-inv {
+  --cms-rich-strong: inherit;
+  --cms-rich-link: #ffffff;
+  --cms-rich-link-hover: #f2f8fc;
+  --cms-rich-marker: #ffffff;
+  --cms-rich-quote-border: #ffffff;
+  --cms-rich-rule: #ffffff;
+}
+
+/* Navy bar surfaces (CTA band): cyan is 4.65:1 on #2a5088 and 8.53:1 on #142845. */
+.cms-inv-bar {
+  --cms-rich-strong: #49d4fc;
+  --cms-rich-link: #49d4fc;
+  --cms-rich-link-hover: #ffffff;
+  --cms-rich-marker: #49d4fc;
+  --cms-rich-quote-border: #49d4fc;
+  --cms-rich-rule: #49d4fc;
+}
+
+/* Dark theme inverted surfaces are all deep (cyan >= 6.64:1). */
+[data-theme="dark"] .cms-inv {
+  --cms-rich-strong: #49d4fc;
+  --cms-rich-link: #49d4fc;
+  --cms-rich-link-hover: #ffffff;
+  --cms-rich-marker: #49d4fc;
+  --cms-rich-quote-border: #49d4fc;
+  --cms-rich-rule: #49d4fc;
+}
+
+/* About page main body: matches the previous hand-rolled paragraph/H2 layout. */
+.cms-rich.about-rich {
+  --cms-rich-gap: 1.5rem;
+}
+.cms-rich.about-rich h2 {
+  padding-top: 1rem;
+  font-size: 1.5rem;
+}

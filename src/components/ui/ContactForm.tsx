@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import type { ContactInfo } from "@/lib/cms";
@@ -124,7 +124,7 @@ function StatusOverlay({
 
 interface ContactFormProps {
   /** Optional heading override */
-  heading?: string;
+  heading?: ReactNode;
   /** Hide the side contact details column */
   hideDetails?: boolean;
   /** Contact info (from CMS) for the sidebar — required if hideDetails is false. */

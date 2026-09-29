@@ -11,6 +11,7 @@ import {
   contactInfo,
   keyFeatures,
 } from "@/lib/cms";
+import { plainText } from "@/lib/cms-rich-text";
 
 export async function generateMetadata({
   params,
@@ -24,10 +25,15 @@ export async function generateMetadata({
     getTranslations({ locale, namespace: "fallbacks" }),
   ]);
   return {
-    title: textBlock(cms, "about_banner_title").title || t("aboutTitle"),
+    title:
+      plainText(textBlock(cms, "about_banner_title").title) || t("aboutTitle"),
     description:
-      textBlock(cms, "about_banner_subtitle").body ||
-      textBlock(cms, "general_meta_description").body ||
+      plainText(textBlock(cms, "about_banner_subtitle").body, {
+        format: "rich",
+      }) ||
+      plainText(textBlock(cms, "general_meta_description").body, {
+        format: "rich",
+      }) ||
       t("metaDescription"),
     alternates: localeAlternates(locale as Locale, "/about"),
   };

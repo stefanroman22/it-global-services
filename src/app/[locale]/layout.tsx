@@ -18,6 +18,8 @@ import {
   image,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
+import { plainText } from "@/lib/cms-rich-text";
+import "@/lib/cms-rich-text/cms-rich.css";
 import "../globals.css";
 
 const inter = Inter({
@@ -42,9 +44,12 @@ export async function generateMetadata({
   if (!hasLocale(routing.locales, locale)) notFound();
   const t = await getTranslations({ locale, namespace: "fallbacks" });
   const cms = await getCmsData(locale);
-  const brand = textBlock(cms, "general_brand_name").title || t("brandName");
+  const brand =
+    plainText(textBlock(cms, "general_brand_name").title) || t("brandName");
   const desc =
-    textBlock(cms, "general_meta_description").body || t("metaDescription");
+    plainText(textBlock(cms, "general_meta_description").body, {
+      format: "rich",
+    }) || t("metaDescription");
   const logoUrl = image(cms, "general_logo").url ?? "/company-logo.png";
 
   return {
@@ -101,7 +106,8 @@ export default async function LocaleLayout({
   ]);
   const services = servicesCatalog(cms).map(toService);
   const contact = contactInfo(cms);
-  const brandName = textBlock(cms, "general_brand_name").title || t("brandName");
+  const brandName =
+    plainText(textBlock(cms, "general_brand_name").title) || t("brandName");
   const footerDescription =
     textBlock(cms, "footer_description").body || t("footerDescription");
   // CMS-managed logo — used by Header (every page), MobileMenu and Footer so a
@@ -120,7 +126,10 @@ export default async function LocaleLayout({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: brandName,
-    description: textBlock(cms, "general_meta_description").body || undefined,
+    description:
+      plainText(textBlock(cms, "general_meta_description").body, {
+        format: "rich",
+      }) || undefined,
     url: SITE_URL,
     image: new URL(logoUrl, SITE_URL).toString(),
     ...(phone ? { telephone: phone } : {}),

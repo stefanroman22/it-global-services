@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { RichText, plainText } from "@/lib/cms-rich-text";
 
 interface SectionMarqueeProps {
   /** Labels to scroll — typically the service titles from the CMS. */
@@ -51,10 +52,10 @@ export default function SectionMarquee({
       >
         {row.map((item, i) => (
           <span
-            key={`${item}-${i}`}
+            key={`${plainText(item)}-${i}`}
             className="flex items-center gap-10 text-sm font-semibold uppercase tracking-[0.2em]"
           >
-            {item}
+            <RichText value={item} format="inline" links={false} />
             <svg
               className="h-2 w-2 opacity-60"
               viewBox="0 0 8 8"
