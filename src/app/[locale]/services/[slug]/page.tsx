@@ -48,16 +48,21 @@ async function serviceAlternates(
   const paths: Partial<Record<Locale, string>> = {
     [locale]: `/services/${item.slug}`,
   };
-  for (const loc of routing.locales) {
-    if (loc === locale) continue;
-    try {
-      const other = await getCmsData(loc);
-      const match = matchItem(item, index, servicesCatalog(other));
-      if (match) paths[loc] = `/services/${match.slug}`;
-    } catch {
-      // Locale manifest unavailable — the switcher falls back to the same slug.
-    }
-  }
+  // Fetch the other locales in parallel — sequential awaits made every
+  // uncached (preview/draft) navigation wait on N round trips.
+  await Promise.all(
+    routing.locales
+      .filter((loc) => loc !== locale)
+      .map(async (loc) => {
+        try {
+          const other = await getCmsData(loc);
+          const match = matchItem(item, index, servicesCatalog(other));
+          if (match) paths[loc] = `/services/${match.slug}`;
+        } catch {
+          // Locale manifest unavailable — the switcher falls back to the same slug.
+        }
+      }),
+  );
   return paths;
 }
 
