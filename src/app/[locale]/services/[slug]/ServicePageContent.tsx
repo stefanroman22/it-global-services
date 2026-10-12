@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ContactForm from "@/components/ui/ContactForm";
 import ServiceScene from "@/components/ui/ServiceScene";
 import type { Service } from "@/data/services";
 import type { ContactInfo } from "@/lib/cms";
-import { RichText, plainText } from "@/lib/cms-rich-text";
+import { CmsIcon, RichText, plainText } from "@/lib/cms-rich-text";
 
 interface Props {
   service: Service;
@@ -16,9 +16,9 @@ interface Props {
   contact: ContactInfo;
 }
 
-/** Mirrors the About page structure: tight banner, one soft intro card
- *  (animated scene + the single description), then a max-w-3xl flow with
- *  the offer checklist and other-services links. */
+/** Mirrors the About page structure: tight banner (optional CMS image +
+ *  centred title), one soft full-width intro card with the description,
+ *  then a max-w-3xl flow with the offer checklist and other-services links. */
 export default function ServicePageContent({
   service,
   allServices,
@@ -26,10 +26,11 @@ export default function ServicePageContent({
 }: Props) {
   const t = useTranslations("service");
   const others = allServices.filter((s) => s.slug !== service.slug);
+  const reduced = useReducedMotion();
 
   return (
     <div className="page-service">
-      {/* Banner — back link + title, same metrics as the About banner */}
+      {/* Banner — back link, CMS image (if set) + title, same metrics as the About banner */}
       <section className="pb-8 pt-16">
         <div className="container-main">
           <motion.div
@@ -55,8 +56,28 @@ export default function ServicePageContent({
               {t("backToServices")}
             </Link>
           </motion.div>
+          {service.image && (
+            <motion.div
+              className="mb-8 overflow-hidden rounded-2xl"
+              // The LCP image: only a small slide, never server-rendered hidden.
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+              // Reduced motion → appear instantly (initial stays SSR-stable).
+              transition={{ duration: reduced ? 0 : 0.5 }}
+            >
+              {/* Decorative: the <h1> right below names the service. */}
+              <img
+                src={service.image}
+                alt=""
+                width={1600}
+                height={600}
+                fetchPriority="high"
+                className="aspect-[16/9] w-full object-cover md:aspect-[8/3]"
+              />
+            </motion.div>
+          )}
           <motion.h1
-            className="section-title !mb-0"
+            className="section-title !mb-0 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -68,21 +89,13 @@ export default function ServicePageContent({
 
       <section className="pb-8">
         <div className="container-main">
-          {/* Intro card — scene grouped with the single description */}
+          {/* Intro card — the single description, full card width */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-10 flex flex-col items-center gap-8 rounded-2xl bg-surface-card-softer p-8 shadow-sm md:flex-row"
+            className="mb-10 rounded-2xl bg-surface-card-softer p-8 shadow-sm"
           >
-            <motion.div
-              className="flex h-40 w-40 shrink-0 items-center justify-center rounded-2xl bg-surface-chip text-ink md:h-48 md:w-48"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
-            >
-              <ServiceScene scene={service.scene} size={96} />
-            </motion.div>
             <RichText
               value={service.fullDescription}
               format="rich"
@@ -148,7 +161,11 @@ export default function ServicePageContent({
                         className="group flex items-center gap-3 rounded-lg px-2 py-2 text-base font-medium transition-colors hover:bg-surface-chip"
                       >
                         <span className="text-ink opacity-70 transition-opacity group-hover:opacity-100">
-                          <ServiceScene scene={s.scene} size={26} />
+                          <CmsIcon
+                            icon={s.icon}
+                            size={26}
+                            fallback={<ServiceScene scene={s.scene} size={26} />}
+                          />
                         </span>
                         <RichText value={s.title} format="inline" links={false} />
                         <svg

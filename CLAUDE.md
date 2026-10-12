@@ -68,18 +68,24 @@ cms.config.json             # declares the CMS content schema (keys, types, page
   localized manifest (`<endpoint>/<locale>`, draft: `<endpoint>/<locale>/draft`) and
   falls back to the default-locale endpoint when the locale is not enabled in the CMS.
   Pages call typed accessors: `textBlock()`, `image()`, `keyValue()`, `repeater()`,
-  `contactInfo()`, `keyFeatures()`, `servicesCatalog()`.
+  `contactInfo()`, `keyFeatures()`, `servicesCatalog()`, `theme()`.
 - Content keys are declared in `cms.config.json` (e.g. `home_hero_subhead`,
   `services_catalog`, `general_logo`). The `_type` (text_block / image / key_value /
   repeater / email_config) determines which accessor to use.
-- **Languages**: the CMS project has locales `en` (default/authoring), `ro`, `hu`;
-  DeepL auto-translation fills `ro`/`hu` server-side when the default locale is saved
-  in the dashboard. UI-chrome strings live in `messages/*.json` in this repo instead.
+- **Languages**: the CMS project has locales `ro` (default/authoring), `en`, `hu`, `fr`,
+  `de`, `it`; DeepL auto-translation fills the others server-side when the default
+  locale is saved in the dashboard. UI-chrome strings live in `messages/*.json` in this repo instead.
 - **Card animations**: `services_catalog` and `key_features` items carry an optional
   `animation` field (a `url`-typed `_schema` field so DeepL never translates it).
   Valid values are the scene keys in `src/data/scenes.ts`; empty → keyword-based
   auto-pick. Scenes themselves are framer-motion SVGs in
   `src/components/ui/ServiceScene.tsx` (every scene must respect reduced motion).
+  An optional CMS `icon` field on the same items replaces the scene (kit `<CmsIcon>`,
+  scene as fallback).
+- **Theme, images**: `general_theme` (kit `<ThemeStyles>` in the layout) sets the site
+  font via `--cms-font-body` / `--cms-font-heading`; without it the bundled Open Sans
+  is used. Service banners (`services_catalog` `image`), `about_intro_image` and
+  `contact_image` fall back to no banner / the animated illustrations when empty.
 - Endpoint + preview behaviour are controlled by env vars (`NEXT_PUBLIC_CMS_ENDPOINT`,
   `NEXT_PUBLIC_CMS_PREVIEW_TOKEN`) set on Vercel — not in this repo. The endpoint env
   var stays locale-less; `cms.ts` derives localized URLs from it.

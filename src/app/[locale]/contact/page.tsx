@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { localeAlternates } from "@/lib/site";
 import ContactPageContent from "./ContactPageContent";
-import { getCmsData, textBlock, contactInfo } from "@/lib/cms";
+import { getCmsData, textBlock, image, contactInfo } from "@/lib/cms";
 import { plainText } from "@/lib/cms-rich-text";
 
 export async function generateMetadata({
@@ -48,11 +48,14 @@ export default async function ContactPage({
     getCmsData(locale),
     getTranslations({ locale, namespace: "fallbacks" }),
   ]);
+  const contactImage = image(cms, "contact_image");
   return (
     <ContactPageContent
       bannerTitle={textBlock(cms, "contact_banner_title").title || t("contactTitle")}
       bannerSubtitle={textBlock(cms, "contact_banner_subtitle").body ?? ""}
       formHeading={textBlock(cms, "contact_form_heading").title || t("formHeading")}
+      imageUrl={contactImage.url ?? ""}
+      imageAlt={contactImage.alt ?? ""}
       contact={contactInfo(cms)}
     />
   );

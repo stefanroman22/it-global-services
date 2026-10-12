@@ -104,7 +104,7 @@ export function SupportDeskIllustration({ className = "", title }: SceneProps) {
           fontSize="15"
           fontWeight="700"
           fill="#2A5088"
-          fontFamily="Inter, sans-serif"
+          fontFamily="inherit"
         >
           24/7
         </text>

@@ -7,7 +7,7 @@ import ServiceScene from "@/components/ui/ServiceScene";
 import { SecureWorkspaceIllustration } from "@/components/ui/Illustrations";
 import { featureScene } from "@/data/scenes";
 import type { ContactInfo, KeyFeature } from "@/lib/cms";
-import { RichText, plainText } from "@/lib/cms-rich-text";
+import { CmsIcon, RichText, plainText, readIcon } from "@/lib/cms-rich-text";
 
 interface AboutPageContentProps {
   bannerTitle: string;
@@ -17,6 +17,9 @@ interface AboutPageContentProps {
   mainBody: string;
   pillarsHeader: string;
   formHeading: string;
+  /** CMS `about_intro_image` URL ("" → the animated illustration). */
+  introImageUrl: string;
+  introImageAlt: string;
   features: KeyFeature[];
   contact: ContactInfo;
 }
@@ -29,6 +32,8 @@ export default function AboutPageContent({
   mainBody,
   pillarsHeader,
   formHeading,
+  introImageUrl,
+  introImageAlt,
   features,
   contact,
 }: AboutPageContentProps) {
@@ -53,7 +58,17 @@ export default function AboutPageContent({
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
             >
-              <SecureWorkspaceIllustration className="h-auto w-full" />
+              {introImageUrl ? (
+                <img
+                  src={introImageUrl}
+                  alt={introImageAlt}
+                  width={640}
+                  height={520}
+                  className="aspect-[640/520] h-full w-full object-contain"
+                />
+              ) : (
+                <SecureWorkspaceIllustration className="h-auto w-full" />
+              )}
             </motion.div>
             <div>
               <h2 className="mb-2 text-xl font-bold text-ink md:text-2xl">
@@ -94,9 +109,15 @@ export default function AboutPageContent({
                   className="flex gap-4"
                 >
                   <div className="shrink-0 text-ink">
-                    <ServiceScene
-                      scene={featureScene(p.animation, plainText(p.title), i)}
+                    <CmsIcon
+                      icon={readIcon(p.icon)}
                       size={44}
+                      fallback={
+                        <ServiceScene
+                          scene={featureScene(p.animation, plainText(p.title), i)}
+                          size={44}
+                        />
+                      }
                     />
                   </div>
                   <div>

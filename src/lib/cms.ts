@@ -17,6 +17,8 @@
  * round trip; Next.js' fetch cache + ISR (revalidate=60) keeps it cheap.
  */
 
+import { readTheme, type CmsIconValue, type CmsTheme } from "@/lib/cms-rich-text";
+
 const ENDPOINT = process.env.NEXT_PUBLIC_CMS_ENDPOINT;
 const PREVIEW_TOKEN = process.env.NEXT_PUBLIC_CMS_PREVIEW_TOKEN;
 
@@ -146,6 +148,11 @@ export function repeater<T = Record<string, unknown>>(
   return svc as CmsRepeater<T>;
 }
 
+/** The project theme (`general_theme`): palette + fonts, or null when absent. */
+export function theme(content: CmsContent): CmsTheme | null {
+  return readTheme(content.content.general_theme);
+}
+
 // ── Domain types layered over generic shapes ─────────────────────────────────
 
 /**
@@ -194,6 +201,8 @@ export interface KeyFeature {
   /** Optional CMS-selected animation scene for the feature card
    *  (see `src/data/scenes.ts` for the predefined set). */
   animation?: string;
+  /** Optional CMS icon; replaces the animation scene when set. */
+  icon?: CmsIconValue | null;
 }
 
 export function keyFeatures(content: CmsContent): KeyFeature[] {
@@ -212,6 +221,10 @@ export interface ServiceCatalogItem {
   /** Optional CMS-selected animation scene for the service card
    *  (see `src/data/scenes.ts` for the predefined set). */
   animation?: string;
+  /** Banner image URL for the service page ("" for none). */
+  image?: string;
+  /** Optional CMS card icon; replaces the animation scene when set. */
+  icon?: CmsIconValue | null;
 }
 
 export function servicesCatalog(content: CmsContent): ServiceCatalogItem[] {

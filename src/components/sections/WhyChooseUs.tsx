@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import ServiceScene from "@/components/ui/ServiceScene";
 import { featureScene } from "@/data/scenes";
 import type { KeyFeature } from "@/lib/cms";
-import { RichText, plainText } from "@/lib/cms-rich-text";
+import { CmsIcon, RichText, plainText, readIcon } from "@/lib/cms-rich-text";
 
 interface WhyChooseUsProps {
   eyebrow: string;
@@ -52,11 +52,17 @@ export default function WhyChooseUs({
               transition={{ duration: 0.45, delay: i * 0.06 }}
               className="card-surface group relative overflow-hidden rounded-2xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
-              {/* Large animated line-icon scene (no chip box) */}
+              {/* CMS icon, else the large animated line-icon scene (no chip box) */}
               <div className="mb-4 text-ink transition-transform duration-300 group-hover:scale-105">
-                <ServiceScene
-                  scene={featureScene(f.animation, plainText(f.title), i)}
+                <CmsIcon
+                  icon={readIcon(f.icon)}
                   size={60}
+                  fallback={
+                    <ServiceScene
+                      scene={featureScene(f.animation, plainText(f.title), i)}
+                      size={60}
+                    />
+                  }
                 />
               </div>
               <h3 className="mb-2 text-lg font-bold text-ink">

@@ -8,6 +8,7 @@ import AboutPageContent from "./AboutPageContent";
 import {
   getCmsData,
   textBlock,
+  image,
   contactInfo,
   keyFeatures,
 } from "@/lib/cms";
@@ -52,6 +53,7 @@ export default async function AboutPage({
     getCmsData(locale),
     getTranslations({ locale, namespace: "fallbacks" }),
   ]);
+  const introImage = image(cms, "about_intro_image");
   return (
     <AboutPageContent
       bannerTitle={textBlock(cms, "about_banner_title").title || t("aboutTitle")}
@@ -61,6 +63,8 @@ export default async function AboutPage({
       mainBody={textBlock(cms, "about_main_body").body ?? ""}
       pillarsHeader={textBlock(cms, "about_pillars_header").title || t("whyHeader")}
       formHeading={textBlock(cms, "about_form_heading").title || t("formHeading")}
+      introImageUrl={introImage.url ?? ""}
+      introImageAlt={introImage.alt ?? ""}
       features={keyFeatures(cms)}
       contact={contactInfo(cms)}
     />

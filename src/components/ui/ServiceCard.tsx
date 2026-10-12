@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ServiceScene from "./ServiceScene";
 import type { Service } from "@/data/services";
-import { RichText } from "@/lib/cms-rich-text";
+import { CmsIcon, RichText } from "@/lib/cms-rich-text";
 
 interface ServiceCardProps {
   service: Service;
@@ -24,12 +24,19 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
         transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
         whileHover={{ scale: 1.02 }}
       >
-        {/* Large animated line-icon scene (no chip box) */}
+        {/* CMS icon, else the large animated line-icon scene (no chip box) */}
         <div className="mb-5 transition-transform duration-300 group-hover:scale-105">
-          <ServiceScene
-            scene={service.scene}
+          <CmsIcon
+            icon={service.icon}
             size={64}
             className="text-[#49d4fc]"
+            fallback={
+              <ServiceScene
+                scene={service.scene}
+                size={64}
+                className="text-[#49d4fc]"
+              />
+            }
           />
         </div>
 

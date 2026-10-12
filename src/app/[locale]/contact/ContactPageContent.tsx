@@ -13,6 +13,9 @@ interface ContactPageContentProps {
   bannerTitle: string;
   bannerSubtitle: string;
   formHeading: string;
+  /** CMS `contact_image` URL ("" → the animated illustration). */
+  imageUrl: string;
+  imageAlt: string;
   contact: ContactInfo;
 }
 
@@ -22,6 +25,8 @@ export default function ContactPageContent({
   bannerTitle,
   bannerSubtitle,
   formHeading,
+  imageUrl,
+  imageAlt,
   contact,
 }: ContactPageContentProps) {
   const t = useTranslations("contactCards");
@@ -49,7 +54,17 @@ export default function ContactPageContent({
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
             >
-              <SupportDeskIllustration className="h-auto w-full" />
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={imageAlt}
+                  width={640}
+                  height={520}
+                  className="aspect-[640/520] h-full w-full object-contain"
+                />
+              ) : (
+                <SupportDeskIllustration className="h-auto w-full" />
+              )}
             </motion.div>
 
             <div className="w-full">

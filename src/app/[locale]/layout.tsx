@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -16,16 +16,19 @@ import {
   servicesCatalog,
   textBlock,
   image,
+  theme,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
-import { plainText } from "@/lib/cms-rich-text";
+import { plainText, ThemeStyles } from "@/lib/cms-rich-text";
 import "@/lib/cms-rich-text/cms-rich.css";
 import "../globals.css";
 
-const inter = Inter({
+// Bundled default font; a CMS theme font overrides it via --cms-font-body /
+// --cms-font-heading (see globals.css). Variable font → all weights.
+const openSans = Open_Sans({
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-open-sans",
 });
 
 /** Applies the persisted / system theme before first paint (no flash). */
@@ -146,9 +149,10 @@ export default async function LocaleLayout({
   };
 
   return (
-    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+    <html lang={locale} className={openSans.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <ThemeStyles theme={theme(cms)} />
         {/* Without JS, framer-motion's SSR'd initial states (opacity/transform)
             would never animate in — force content visible instead. */}
         <noscript>

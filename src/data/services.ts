@@ -10,7 +10,7 @@
 import type { SceneKey } from "@/data/scenes";
 import { serviceScene } from "@/data/scenes";
 import type { ServiceCatalogItem } from "@/lib/cms";
-import { plainText } from "@/lib/cms-rich-text";
+import { plainText, readIcon, type CmsIconValue } from "@/lib/cms-rich-text";
 
 export interface Service {
   slug: string;
@@ -20,6 +20,10 @@ export interface Service {
   features: string[];
   /** Resolved animated scene key (CMS `animation` field or keyword match). */
   scene: SceneKey;
+  /** Banner image URL for the service page ("" for none). */
+  image: string;
+  /** CMS card icon (null → the animated scene). */
+  icon: CmsIconValue | null;
 }
 
 /** Adapt a CMS catalog item to the `Service` shape used by components. */
@@ -31,5 +35,7 @@ export function toService(item: ServiceCatalogItem): Service {
     fullDescription: item.full_description,
     features: item.features ?? [],
     scene: serviceScene(item.animation, item.slug, plainText(item.title)),
+    image: item.image ?? "",
+    icon: readIcon(item.icon),
   };
 }
