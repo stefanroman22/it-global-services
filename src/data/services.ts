@@ -10,7 +10,7 @@
 import type { SceneKey } from "@/data/scenes";
 import { serviceScene } from "@/data/scenes";
 import type { ServiceCatalogItem } from "@/lib/cms";
-import { plainText, readIcon, type CmsIconValue } from "@/lib/cms-rich-text";
+import { plainText, readIcon, slugify, type CmsIconValue } from "@/lib/cms-rich-text";
 
 export interface Service {
   slug: string;
@@ -29,7 +29,7 @@ export interface Service {
 /** Adapt a CMS catalog item to the `Service` shape used by components. */
 export function toService(item: ServiceCatalogItem): Service {
   return {
-    slug: item.slug,
+    slug: slugify(item.slug),
     title: item.title,
     shortDescription: item.short_description,
     fullDescription: item.full_description,

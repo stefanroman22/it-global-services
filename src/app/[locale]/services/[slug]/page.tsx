@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
+import { getPathname } from "@/i18n/navigation";
 import { localeAlternates } from "@/lib/site";
 import {
   getCmsData,
@@ -11,7 +12,7 @@ import {
   type ServiceCatalogItem,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
-import { plainText } from "@/lib/cms-rich-text";
+import { plainText, slugify } from "@/lib/cms-rich-text";
 import { SetRouteAlternates } from "@/components/providers/RouteAlternatesProvider";
 import ServicePageContent from "./ServicePageContent";
 
@@ -21,7 +22,17 @@ export async function generateStaticParams({
   params: { locale: string };
 }) {
   const cms = await getCmsData(params.locale);
-  return servicesCatalog(cms).map((s) => ({ slug: s.slug }));
+  return servicesCatalog(cms)
+    .filter((s) => slugify(s.slug) !== "")
+    .map((s) => ({ slug: slugify(s.slug) }));
+}
+
+function safeDecode(s: string): string {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
 }
 
 /** The CMS translates slugs per locale; find the equivalent item in another
@@ -35,7 +46,7 @@ function matchItem(
     const byId = catalog.find((c) => c._id === item._id);
     if (byId) return byId;
   }
-  const bySlug = catalog.find((c) => c.slug === item.slug);
+  const bySlug = catalog.find((c) => slugify(c.slug) === slugify(item.slug));
   if (bySlug) return bySlug;
   return catalog[index];
 }
@@ -46,7 +57,7 @@ async function serviceAlternates(
   index: number,
 ): Promise<Partial<Record<Locale, string>>> {
   const paths: Partial<Record<Locale, string>> = {
-    [locale]: `/services/${item.slug}`,
+    [locale]: `/services/${slugify(item.slug)}`,
   };
   // Fetch the other locales in parallel — sequential awaits made every
   // uncached (preview/draft) navigation wait on N round trips.
@@ -57,7 +68,7 @@ async function serviceAlternates(
         try {
           const other = await getCmsData(loc);
           const match = matchItem(item, index, servicesCatalog(other));
-          if (match) paths[loc] = `/services/${match.slug}`;
+          if (match) paths[loc] = `/services/${slugify(match.slug)}`;
         } catch {
           // Locale manifest unavailable — the switcher falls back to the same slug.
         }
@@ -74,15 +85,17 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const cms = await getCmsData(locale);
+  const wanted = slugify(safeDecode(slug));
+  if (wanted === "") notFound();
   const catalog = servicesCatalog(cms);
-  const index = catalog.findIndex((s) => s.slug === slug);
+  const index = catalog.findIndex((s) => slugify(s.slug) === wanted);
   if (index === -1) notFound();
   const item = catalog[index];
   const paths = await serviceAlternates(locale as Locale, item, index);
   return {
     title: plainText(item.title),
     description: plainText(item.short_description, { format: "rich" }),
-    alternates: localeAlternates(locale as Locale, `/services/${slug}`, paths),
+    alternates: localeAlternates(locale as Locale, `/services/${slugify(item.slug)}`, paths),
   };
 }
 
@@ -96,10 +109,15 @@ export default async function ServicePage({
   setRequestLocale(locale);
 
   const cms = await getCmsData(locale);
+  const wanted = slugify(safeDecode(slug));
+  if (wanted === "") notFound();
   const catalog = servicesCatalog(cms);
-  const index = catalog.findIndex((s) => s.slug === slug);
+  const index = catalog.findIndex((s) => slugify(s.slug) === wanted);
   if (index === -1) notFound();
   const item = catalog[index];
+  if (slugify(item.slug) !== slug) {
+    permanentRedirect(getPathname({ href: `/services/${slugify(item.slug)}`, locale }));
+  }
   const alternates = await serviceAlternates(locale as Locale, item, index);
 
   return (

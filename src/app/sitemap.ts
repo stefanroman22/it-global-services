@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { SITE_URL, localePath } from "@/lib/site";
+import { slugify } from "@/lib/cms-rich-text";
 import { getCmsData, servicesCatalog } from "@/lib/cms";
 
 export const revalidate = 3600;
@@ -29,8 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       const cms = await getCmsData(locale);
       for (const item of servicesCatalog(cms)) {
+        if (slugify(item.slug) === "") continue;
         entries.push({
-          url: `${SITE_URL}${localePath(locale, `/services/${item.slug}`)}`,
+          url: `${SITE_URL}${localePath(locale, `/services/${slugify(item.slug)}`)}`,
           changeFrequency: "monthly",
           priority: 0.8,
         });
