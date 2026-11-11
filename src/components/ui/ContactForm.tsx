@@ -129,10 +129,17 @@ interface ContactFormProps {
   hideDetails?: boolean;
   /** Contact info (from CMS) for the sidebar — required if hideDetails is false. */
   contact?: ContactInfo;
+  /** "section" (default): the full section with heading and details aside.
+   *  "bare": only the form (no section, container, heading or aside), for
+   *  layouts that place it in their own column. */
+  variant?: "section" | "bare";
+  /** Show the optional Company field. */
+  showCompany?: boolean;
 }
 
 interface FormData {
   name: string;
+  company: string;
   email: string;
   phone: string;
   message: string;
@@ -149,11 +156,15 @@ export default function ContactForm({
   heading,
   hideDetails = false,
   contact = {},
+  variant = "section",
+  showCompany = false,
 }: ContactFormProps) {
   const t = useTranslations("form");
   const tCards = useTranslations("contactCards");
+  const bare = variant === "bare";
   const [form, setForm] = useState<FormData>({
     name: "",
+    company: "",
     email: "",
     phone: "",
     message: "",
@@ -191,6 +202,8 @@ export default function ContactForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
+          // Optional: the email lists every key sent, so leave it out when empty.
+          ...(form.company.trim() ? { company: form.company.trim() } : {}),
           email: form.email,
           phone: form.phone,
           message: form.message,
@@ -202,7 +215,14 @@ export default function ContactForm({
       }
 
       setStatus("sent");
-      setForm({ name: "", email: "", phone: "", message: "", company_fax: "" });
+      setForm({
+        name: "",
+        company: "",
+        email: "",
+        phone: "",
+        message: "",
+        company_fax: "",
+      });
       setErrors({});
     } catch {
       setStatus("error");
@@ -224,6 +244,207 @@ export default function ContactForm({
   // they all show up with appropriate icons via `resolveContactCards`.
   const asideCards = resolveContactCards(contact);
 
+  const nameField = (
+    <div>
+      <label htmlFor="name" className="form-label">
+        {t("name")} *
+      </label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        value={form.name}
+        onChange={handleChange}
+        autoComplete="name"
+        aria-required="true"
+        aria-invalid={!!errors.name}
+        aria-describedby={errors.name ? "name-error" : undefined}
+        className={`form-input ${errors.name ? "border-red-400" : ""}`}
+        placeholder={t("namePlaceholder")}
+      />
+      {errors.name && (
+        <p id="name-error" role="alert" className="form-error">
+          {errors.name}
+        </p>
+      )}
+    </div>
+  );
+
+  const emailField = (
+    <div>
+      <label htmlFor="email" className="form-label">
+        {t("email")} *
+      </label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        value={form.email}
+        onChange={handleChange}
+        autoComplete="email"
+        aria-required="true"
+        aria-invalid={!!errors.email}
+        aria-describedby={errors.email ? "email-error" : undefined}
+        className={`form-input ${errors.email ? "border-red-400" : ""}`}
+        placeholder={t("emailPlaceholder")}
+      />
+      {errors.email && (
+        <p id="email-error" role="alert" className="form-error">
+          {errors.email}
+        </p>
+      )}
+    </div>
+  );
+
+  const phoneField = (
+    <div>
+      <label htmlFor="phone" className="form-label">
+        {t("phone")}
+      </label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        value={form.phone}
+        onChange={handleChange}
+        autoComplete="tel"
+        className="form-input"
+        placeholder={t("phonePlaceholder")}
+      />
+    </div>
+  );
+
+  const companyField = (
+    <div>
+      <label htmlFor="company" className="form-label">
+        {t("company")}
+      </label>
+      <input
+        id="company"
+        name="company"
+        type="text"
+        value={form.company}
+        onChange={handleChange}
+        autoComplete="organization"
+        maxLength={200}
+        className="form-input"
+        placeholder={t("companyPlaceholder")}
+      />
+    </div>
+  );
+
+  const formEl = (
+    <motion.form
+      onSubmit={handleSubmit}
+      // Bare: the parent column owns the entrance, so the form is never
+      // hidden behind a scroll-triggered fade.
+      {...(bare
+        ? {}
+        : {
+            initial: { opacity: 0, y: 20 },
+            whileInView: { opacity: 1, y: 0 },
+            viewport: { once: true, margin: "0px 0px 200px 0px" },
+            transition: { duration: 0.5 },
+          })}
+      className="space-y-5"
+      noValidate
+    >
+      {/* Honeypot */}
+      <input
+        type="text"
+        name="company_fax"
+        value={form.company_fax}
+        onChange={handleChange}
+        className="absolute -left-[9999px] opacity-0"
+        tabIndex={-1}
+        autoComplete="new-password"
+        aria-hidden="true"
+      />
+
+      {showCompany ? (
+        <>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {nameField}
+            {companyField}
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {emailField}
+            {phoneField}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {nameField}
+            {emailField}
+          </div>
+          {phoneField}
+        </>
+      )}
+
+      <div>
+        <label htmlFor="message" className="form-label">
+          {t("message")} *
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          value={form.message}
+          onChange={handleChange}
+          aria-required="true"
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? "message-error" : undefined}
+          className={`form-textarea ${errors.message ? "border-red-400" : ""}`}
+          placeholder={t("messagePlaceholder")}
+        />
+        {errors.message && (
+          <p id="message-error" role="alert" className="form-error">
+            {errors.message}
+          </p>
+        )}
+      </div>
+
+      <button
+        type="submit"
+        className="btn-submit"
+        disabled={status === "sending"}
+      >
+        {status === "sending" ? t("sending") : t("send")}
+      </button>
+
+      <AnimatePresence>
+        {status === "error" && (
+          <motion.p
+            role="alert"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700 dark:bg-red-950/60 dark:text-red-300"
+          >
+            {t("errorBody")}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.form>
+  );
+
+  const overlay = (
+    <AnimatePresence>
+      {(status === "sending" || status === "sent") && (
+        <StatusOverlay phase={status} onDone={() => setStatus("idle")} />
+      )}
+    </AnimatePresence>
+  );
+
+  if (bare) {
+    return (
+      <>
+        {formEl}
+        {overlay}
+      </>
+    );
+  }
+
   return (
     <section className="pb-10">
       <div className="container-main">
@@ -240,143 +461,9 @@ export default function ContactForm({
         <div
           className={`grid gap-10 ${hideDetails ? "" : "lg:grid-cols-[1fr_380px]"}`}
         >
-          <motion.form
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px 0px 200px 0px" }}
-            transition={{ duration: 0.5 }}
-            className="space-y-5"
-            noValidate
-          >
-            {/* Honeypot */}
-            <input
-              type="text"
-              name="company_fax"
-              value={form.company_fax}
-              onChange={handleChange}
-              className="absolute -left-[9999px] opacity-0"
-              tabIndex={-1}
-              autoComplete="new-password"
-              aria-hidden="true"
-            />
+          {formEl}
 
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="form-label">
-                  {t("name")} *
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={form.name}
-                  onChange={handleChange}
-                  autoComplete="name"
-                  aria-required="true"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
-                  className={`form-input ${errors.name ? "border-red-400" : ""}`}
-                  placeholder={t("namePlaceholder")}
-                />
-                {errors.name && (
-                  <p id="name-error" role="alert" className="form-error">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="email" className="form-label">
-                  {t("email")} *
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  autoComplete="email"
-                  aria-required="true"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
-                  className={`form-input ${errors.email ? "border-red-400" : ""}`}
-                  placeholder={t("emailPlaceholder")}
-                />
-                {errors.email && (
-                  <p id="email-error" role="alert" className="form-error">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="form-label">
-                {t("phone")}
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={form.phone}
-                onChange={handleChange}
-                autoComplete="tel"
-                className="form-input"
-                placeholder={t("phonePlaceholder")}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="form-label">
-                {t("message")} *
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                aria-required="true"
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? "message-error" : undefined}
-                className={`form-textarea ${errors.message ? "border-red-400" : ""}`}
-                placeholder={t("messagePlaceholder")}
-              />
-              {errors.message && (
-                <p id="message-error" role="alert" className="form-error">
-                  {errors.message}
-                </p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              className="btn-submit"
-              disabled={status === "sending"}
-            >
-              {status === "sending" ? t("sending") : t("send")}
-            </button>
-
-            <AnimatePresence>
-              {status === "error" && (
-                <motion.p
-                  role="alert"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700 dark:bg-red-950/60 dark:text-red-300"
-                >
-                  {t("errorBody")}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.form>
-
-          <AnimatePresence>
-            {(status === "sending" || status === "sent") && (
-              <StatusOverlay phase={status} onDone={() => setStatus("idle")} />
-            )}
-          </AnimatePresence>
+          {overlay}
 
           {!hideDetails && (
             <motion.aside
@@ -384,7 +471,7 @@ export default function ContactForm({
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "0px 0px 200px 0px" }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              className="space-y-6 self-start rounded-xl bg-surface-card-softer p-8 shadow-sm backdrop-blur-sm"
+              className="page-card space-y-6 self-start rounded-xl bg-surface-card-softer p-8 shadow-sm backdrop-blur-sm"
             >
               <h3 className="text-lg font-bold">{t("contactInfoHeading")}</h3>
 

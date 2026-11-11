@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import ServiceScene from "./ServiceScene";
 import type { SceneKey } from "@/data/scenes";
@@ -10,13 +11,26 @@ interface PageBannerProps {
   subtitle?: string;
   /** Animated scene shown in the banner chip. */
   scene?: SceneKey;
+  /** Optional image/illustration above the title, always in the standard
+   *  container (carries its own bottom margin). */
+  media?: ReactNode;
+  /** Container of the title row (default `container-main`), so the title
+   *  lines up with page text set to another width. */
+  containerClassName?: string;
 }
 
 /** Reusable page banner with title, optional subtitle, and animated scene */
-export default function PageBanner({ title, subtitle, scene }: PageBannerProps) {
+export default function PageBanner({
+  title,
+  subtitle,
+  scene,
+  media,
+  containerClassName = "container-main",
+}: PageBannerProps) {
   return (
     <section className="pb-8 pt-16">
-      <div className="container-main">
+      {media && <div className="container-main">{media}</div>}
+      <div className={containerClassName}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

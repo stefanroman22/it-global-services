@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import PageBanner from "@/components/ui/PageBanner";
 import ContactForm from "@/components/ui/ContactForm";
 import ServiceScene from "@/components/ui/ServiceScene";
@@ -8,6 +8,12 @@ import { SecureWorkspaceIllustration } from "@/components/ui/Illustrations";
 import { featureScene } from "@/data/scenes";
 import type { ContactInfo, KeyFeature } from "@/lib/cms";
 import { CmsIcon, RichText, plainText, readIcon } from "@/lib/cms-rich-text";
+import {
+  contentContainerClass,
+  pageSurface,
+  proseColumnClass,
+  type AboutPageOptions,
+} from "@/lib/pageOptions";
 
 interface AboutPageContentProps {
   bannerTitle: string;
@@ -22,6 +28,8 @@ interface AboutPageContentProps {
   introImageAlt: string;
   features: KeyFeature[];
   contact: ContactInfo;
+  /** CMS display options (`about_page_options`). */
+  options: AboutPageOptions;
 }
 
 export default function AboutPageContent({
@@ -36,40 +44,100 @@ export default function AboutPageContent({
   introImageAlt,
   features,
   contact,
+  options,
 }: AboutPageContentProps) {
   // About page renders 4 pillars (slice from shared key_features)
   const pillars = features.slice(0, 4);
+  const reduced = useReducedMotion();
+  const surface = pageSurface(options);
+  const width = options.content_width;
+  const container = contentContainerClass(width);
+  // top (default) | left | right | hidden — an unknown value reads as top.
+  const position = ["left", "right", "hidden"].includes(options.image_position)
+    ? options.image_position
+    : "top";
+  const sideImage = position === "left" || position === "right";
+
+  // `top`: the CMS image with the service-banner metrics, or the animated
+  // illustration at its in-card size when no image is set.
+  const topMedia =
+    position !== "top" ? undefined : introImageUrl ? (
+      <motion.div
+        className="mb-8 overflow-hidden rounded-2xl"
+        // Likely the LCP image: only a small slide, never server-rendered hidden.
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: reduced ? 0 : 0.5 }}
+      >
+        <img
+          src={introImageUrl}
+          alt={introImageAlt}
+          width={1600}
+          height={600}
+          fetchPriority="high"
+          className="aspect-[16/9] w-full object-cover md:aspect-[8/3]"
+        />
+      </motion.div>
+    ) : (
+      <motion.div
+        className="mx-auto mb-8 w-56 md:w-72"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: reduced ? 0 : 0.55, ease: "easeOut" }}
+      >
+        <SecureWorkspaceIllustration className="h-auto w-full" />
+      </motion.div>
+    );
+
+  // Wide text: four pillars in one row once each column has room.
+  const pillarColumns =
+    width === "wide" || width === "full"
+      ? "sm:grid-cols-2 2xl:grid-cols-4"
+      : "sm:grid-cols-2";
 
   return (
-    <div className="page-about">
-      <PageBanner title={bannerTitle} subtitle={bannerSubtitle} />
+    <div className={`page-about ${surface.className}`} style={surface.style}>
+      <PageBanner
+        title={bannerTitle}
+        subtitle={bannerSubtitle}
+        media={topMedia}
+        containerClassName={container}
+      />
 
       <section className="pb-8">
-        <div className="container-main">
+        <div className={container}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-10 flex flex-col items-center gap-8 rounded-2xl bg-surface-card-softer p-8 shadow-sm md:flex-row"
+            className={
+              sideImage
+                ? `page-card mb-10 flex flex-col items-center gap-8 rounded-2xl bg-surface-card-softer p-8 shadow-sm ${
+                    position === "right" ? "md:flex-row-reverse" : "md:flex-row"
+                  }`
+                : "page-card mb-10 rounded-2xl bg-surface-card-softer p-8 shadow-sm"
+            }
           >
-            <motion.div
-              className="w-56 shrink-0 md:w-72"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
-            >
-              {introImageUrl ? (
-                <img
-                  src={introImageUrl}
-                  alt={introImageAlt}
-                  width={640}
-                  height={520}
-                  className="aspect-[640/520] h-full w-full object-contain"
-                />
-              ) : (
-                <SecureWorkspaceIllustration className="h-auto w-full" />
-              )}
-            </motion.div>
+            {sideImage && (
+              <motion.div
+                className="w-56 shrink-0 md:w-72"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
+              >
+                {introImageUrl ? (
+                  <img
+                    src={introImageUrl}
+                    alt={introImageAlt}
+                    width={640}
+                    height={520}
+                    className="aspect-[640/520] h-full w-full object-contain"
+                  />
+                ) : (
+                  <SecureWorkspaceIllustration className="h-auto w-full" />
+                )}
+              </motion.div>
+            )}
             <div>
               <h2 className="mb-2 text-xl font-bold text-ink md:text-2xl">
                 <RichText value={introHeading} format="inline" />
@@ -87,7 +155,7 @@ export default function AboutPageContent({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="max-w-3xl space-y-6 text-lg leading-relaxed"
+            className={`${proseColumnClass(width)} space-y-6 text-lg leading-relaxed`}
           >
             <RichText
               value={mainBody}
@@ -98,7 +166,7 @@ export default function AboutPageContent({
             <h2 className="pt-6 text-2xl font-bold">
               <RichText value={pillarsHeader} format="inline" />
             </h2>
-            <div className="grid gap-x-12 gap-y-8 pt-2 sm:grid-cols-2">
+            <div className={`grid gap-x-12 gap-y-8 pt-2 ${pillarColumns}`}>
               {pillars.map((p, i) => (
                 <motion.div
                   key={plainText(p.title) || i}

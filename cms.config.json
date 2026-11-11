@@ -13,6 +13,7 @@
     "contact_form_email": { "type": "email_config", "page": "General" },
     "key_features": { "type": "repeater", "page": "General" },
     "services_catalog": { "type": "repeater", "page": "General" },
+    "services_page_options": { "type": "options", "page": "Services", "schema": { "content_width": "select", "background": "color", "card_background": "color" } },
     "home_hero_image": { "type": "image", "page": "Home" },
     "home_hero_subhead": { "type": "text_block", "page": "Home" },
     "home_services_header": { "type": "text_block", "page": "Home" },
@@ -29,10 +30,14 @@
     "about_main_body": { "type": "text_block", "page": "About" },
     "about_pillars_header": { "type": "text_block", "page": "About" },
     "about_form_heading": { "type": "text_block", "page": "About" },
+    "about_page_options": { "type": "options", "page": "About", "schema": { "image_position": "select", "content_width": "select", "background": "color", "card_background": "color" } },
     "contact_banner_title": { "type": "text_block", "page": "Contact" },
     "contact_banner_subtitle": { "type": "text_block", "page": "Contact" },
     "contact_form_heading": { "type": "text_block", "page": "Contact" },
     "contact_image": { "type": "image", "page": "Contact" },
+    "contact_banner_image": { "type": "image", "page": "Contact", "hint": { "width": 1920, "height": 600 } },
+    "contact_form_intro": { "type": "text_block", "page": "Contact" },
+    "contact_page_options": { "type": "options", "page": "Contact", "schema": { "layout": "select", "show_map": "toggle", "content_width": "select", "background": "color", "card_background": "color" } },
     "footer_description": { "type": "text_block", "page": "Footer" }
   }
 }

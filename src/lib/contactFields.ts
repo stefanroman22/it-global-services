@@ -226,3 +226,13 @@ export function resolveContactCards(
     return card;
   });
 }
+
+/** The first card resolved as an address (`visitUs` family), or null. */
+export function findAddressCard(cards: ContactCard[]): ContactCard | null {
+  return cards.find((card) => card.labelKey === "visitUs") ?? null;
+}
+
+/** Keyless Google Maps embed URL for an address. */
+export function mapEmbedUrl(address: string): string {
+  return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+}

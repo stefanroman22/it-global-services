@@ -10,7 +10,13 @@
 import type { SceneKey } from "@/data/scenes";
 import { serviceScene } from "@/data/scenes";
 import type { ServiceCatalogItem } from "@/lib/cms";
-import { plainText, readIcon, slugify, type CmsIconValue } from "@/lib/cms-rich-text";
+import {
+  plainText,
+  readIcon,
+  readToggle,
+  slugify,
+  type CmsIconValue,
+} from "@/lib/cms-rich-text";
 
 export interface Service {
   slug: string;
@@ -24,6 +30,10 @@ export interface Service {
   image: string;
   /** CMS card icon (null → the animated scene). */
   icon: CmsIconValue | null;
+  /** Heading of the service page: CMS `page_title`, or `title` when empty. */
+  pageTitle: string;
+  /** Whether the service page shows its heading (CMS `show_title`, default on). */
+  showTitle: boolean;
 }
 
 /** Adapt a CMS catalog item to the `Service` shape used by components. */
@@ -37,5 +47,7 @@ export function toService(item: ServiceCatalogItem): Service {
     scene: serviceScene(item.animation, item.slug, plainText(item.title)),
     image: item.image ?? "",
     icon: readIcon(item.icon),
+    pageTitle: plainText(item.page_title) ? (item.page_title as string) : item.title,
+    showTitle: readToggle(item.show_title, true),
   };
 }

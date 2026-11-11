@@ -118,6 +118,15 @@
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
+  /* Wider text containers picked in the CMS (display option `content_width`). */
+  .container-wide {
+    @apply mx-auto w-full max-w-[100rem] px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-full {
+    @apply w-full px-4 sm:px-6 lg:px-8;
+  }
+
   /* Shared vertical rhythm — every landing/page section uses the same
      padding so section-to-section distance stays uniform. Sections may
      grow taller with content but never shrink below this. */
@@ -368,4 +377,43 @@
 .cms-rich.about-rich h2 {
   padding-top: 1rem;
   font-size: 1.5rem;
+}
+
+/* ===== Client-chosen page colours (CMS display options, ADR-0013) =====
+   Set by pageSurface() in lib/pageOptions.ts as CSS variables on the page
+   wrapper. Light theme only: the dark theme keeps its derived palette. */
+:root:not([data-theme="dark"]) .page-custom-bg {
+  background: var(--page-bg);
+  --ink: var(--page-ink);
+  --cms-rich-strong: var(--page-ink);
+  --cms-rich-link: var(--page-ink);
+  --cms-rich-link-hover: var(--page-ink);
+  --cms-rich-marker: var(--page-ink);
+  --cms-rich-quote-border: var(--page-ink);
+  --cms-rich-rule: var(--page-ink);
+  color: var(--page-ink);
+}
+
+:root:not([data-theme="dark"]) .page-custom-card .page-card {
+  background-color: var(--page-card-bg, var(--surface-card-softer));
+  --ink: var(--page-card-ink);
+  --cms-rich-strong: var(--page-card-ink);
+  --cms-rich-link: var(--page-card-ink);
+  --cms-rich-link-hover: var(--page-card-ink);
+  --cms-rich-marker: var(--page-card-ink);
+  --cms-rich-quote-border: var(--page-card-ink);
+  --cms-rich-rule: var(--page-card-ink);
+  color: var(--page-card-ink);
+}
+
+/* Form fields keep their own white surface, so their text stays the site ink. */
+:root:not([data-theme="dark"]) .page-custom-bg .form-input,
+:root:not([data-theme="dark"]) .page-custom-bg .form-textarea {
+  color: #074285;
+}
+
+/* Contact hero band (photo under a dark overlay, or the navy brand band):
+   bold stays the hero's white in the light theme, also on a custom page colour. */
+:root:not([data-theme="dark"]) .contact-hero .cms-inv {
+  --cms-rich-strong: currentColor;
 }

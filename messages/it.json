@@ -32,6 +32,8 @@
     "namePlaceholder": "Il tuo nome",
     "emailPlaceholder": "tu@esempio.it",
     "phonePlaceholder": "+40 700 000 000",
+    "company": "Azienda",
+    "companyPlaceholder": "Nome dell’azienda (facoltativo)",
     "messagePlaceholder": "Descrivi il tuo problema o la tua domanda…",
     "nameRequired": "Il nome è obbligatorio.",
     "emailRequired": "L'email è obbligatoria.",
@@ -53,6 +55,10 @@
     "visitUs": "Vieni a trovarci",
     "businessHours": "Orari",
     "website": "Sito web"
+  },
+  "contactPage": {
+    "mapTitle": "Mappa della nostra sede",
+    "openInMaps": "Apri in Google Maps"
   },
   "footer": {
     "navigation": "Navigazione",
@@ -87,6 +93,7 @@
     "aboutTitle": "Chi siamo",
     "contactTitle": "Contatti",
     "formHeading": "Inviaci un messaggio",
+    "formIntro": "Hai un problema con il computer, il portatile o la rete? Compila il modulo qui sotto e ti ricontatteremo al più presto.",
     "footerDescription": "Il tuo partner di fiducia per servizi IT completi.",
     "ctaHeading": "Domande sulla tua IT? Parliamone."
   },

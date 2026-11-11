@@ -225,6 +225,11 @@ export interface ServiceCatalogItem {
   image?: string;
   /** Optional CMS card icon; replaces the animation scene when set. */
   icon?: CmsIconValue | null;
+  /** Optional heading for the service page only (inline rich text); empty →
+   *  `title`. Menus, cards, footer and metadata keep using `title`. */
+  page_title?: string;
+  /** Display option (toggle): show the heading on the service page. Absent → shown. */
+  show_title?: boolean;
 }
 
 export function servicesCatalog(content: CmsContent): ServiceCatalogItem[] {

@@ -7,6 +7,7 @@ import { localeAlternates } from "@/lib/site";
 import ContactPageContent from "./ContactPageContent";
 import { getCmsData, textBlock, image, contactInfo } from "@/lib/cms";
 import { plainText } from "@/lib/cms-rich-text";
+import { contactPageOptions } from "@/lib/pageOptions";
 
 export async function generateMetadata({
   params,
@@ -49,6 +50,8 @@ export default async function ContactPage({
     getTranslations({ locale, namespace: "fallbacks" }),
   ]);
   const contactImage = image(cms, "contact_image");
+  const bannerImage = image(cms, "contact_banner_image");
+  const formIntro = textBlock(cms, "contact_form_intro").body ?? "";
   return (
     <ContactPageContent
       bannerTitle={textBlock(cms, "contact_banner_title").title || t("contactTitle")}
@@ -56,7 +59,15 @@ export default async function ContactPage({
       formHeading={textBlock(cms, "contact_form_heading").title || t("formHeading")}
       imageUrl={contactImage.url ?? ""}
       imageAlt={contactImage.alt ?? ""}
+      bannerImageUrl={bannerImage.url ?? ""}
+      // Decorative unless the CMS gives it an alt: the <h1> names the page.
+      bannerImageAlt={bannerImage.alt ?? ""}
+      // An emptied rich editor can still hold markup ("<p></p>").
+      formIntro={
+        plainText(formIntro, { format: "rich" }).trim() ? formIntro : t("formIntro")
+      }
       contact={contactInfo(cms)}
+      options={contactPageOptions(cms)}
     />
   );
 }

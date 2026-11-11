@@ -8,28 +8,41 @@ import ServiceScene from "@/components/ui/ServiceScene";
 import type { Service } from "@/data/services";
 import type { ContactInfo } from "@/lib/cms";
 import { CmsIcon, RichText, plainText } from "@/lib/cms-rich-text";
+import {
+  contentContainerClass,
+  pageSurface,
+  proseColumnClass,
+  type ServicePageOptions,
+} from "@/lib/pageOptions";
 
 interface Props {
   service: Service;
   /** Full catalog — the page cross-links the other services. */
   allServices: Service[];
   contact: ContactInfo;
+  /** CMS display options (`services_page_options`). */
+  options: ServicePageOptions;
 }
 
 /** Mirrors the About page structure: tight banner (optional CMS image +
  *  centred title), one soft full-width intro card with the description,
- *  then a max-w-3xl flow with the offer checklist and other-services links. */
+ *  then a flow with the offer checklist and other-services links. The
+ *  banner keeps the standard container; the text below follows the CMS
+ *  `content_width` (`narrow` = the original max-w-3xl reading column). */
 export default function ServicePageContent({
   service,
   allServices,
   contact,
+  options,
 }: Props) {
   const t = useTranslations("service");
   const others = allServices.filter((s) => s.slug !== service.slug);
   const reduced = useReducedMotion();
+  const surface = pageSurface(options);
+  const width = options.content_width;
 
   return (
-    <div className="page-service">
+    <div className={`page-service ${surface.className}`} style={surface.style}>
       {/* Banner — back link, CMS image (if set) + title, same metrics as the About banner */}
       <section className="pb-8 pt-16">
         <div className="container-main">
@@ -37,7 +50,8 @@ export default function ServicePageContent({
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-            className="mb-4"
+            // Nothing visible below the link → no extra gap before the card.
+            className={service.image || service.showTitle ? "mb-4" : undefined}
           >
             <Link
               href="/#services"
@@ -58,7 +72,7 @@ export default function ServicePageContent({
           </motion.div>
           {service.image && (
             <motion.div
-              className="mb-8 overflow-hidden rounded-2xl"
+              className={`${service.showTitle ? "mb-8 " : ""}overflow-hidden rounded-2xl`}
               // The LCP image: only a small slide, never server-rendered hidden.
               initial={{ y: 20 }}
               animate={{ y: 0 }}
@@ -76,25 +90,30 @@ export default function ServicePageContent({
               />
             </motion.div>
           )}
-          <motion.h1
-            className="section-title !mb-0 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <RichText value={service.title} format="inline" />
-          </motion.h1>
+          {service.showTitle ? (
+            <motion.h1
+              className="section-title !mb-0 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <RichText value={service.pageTitle} format="inline" />
+            </motion.h1>
+          ) : (
+            // Heading switched off in the CMS: kept for screen readers and SEO.
+            <h1 className="sr-only">{plainText(service.pageTitle)}</h1>
+          )}
         </div>
       </section>
 
       <section className="pb-8">
-        <div className="container-main">
+        <div className={contentContainerClass(width)}>
           {/* Intro card — the single description, full card width */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-10 rounded-2xl bg-surface-card-softer p-8 shadow-sm"
+            className="page-card mb-10 rounded-2xl bg-surface-card-softer p-8 shadow-sm"
           >
             <RichText
               value={service.fullDescription}
@@ -107,7 +126,7 @@ export default function ServicePageContent({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="max-w-3xl space-y-6 text-lg leading-relaxed"
+            className={`${proseColumnClass(width)} space-y-6 text-lg leading-relaxed`}
           >
             <h2 className="pt-4 text-2xl font-bold">{t("whatWeOffer")}</h2>
             <ul className="grid gap-x-12 gap-y-4 sm:grid-cols-2">

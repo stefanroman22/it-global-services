@@ -32,6 +32,8 @@
     "namePlaceholder": "Numele tău",
     "emailPlaceholder": "tu@exemplu.ro",
     "phonePlaceholder": "+40 700 000 000",
+    "company": "Companie",
+    "companyPlaceholder": "Numele firmei (opțional)",
     "messagePlaceholder": "Spune-ne ce problemă ai sau ce te interesează…",
     "nameRequired": "Numele este obligatoriu.",
     "emailRequired": "Emailul este obligatoriu.",
@@ -53,6 +55,10 @@
     "visitUs": "Vizitează-ne",
     "businessHours": "Program",
     "website": "Website"
+  },
+  "contactPage": {
+    "mapTitle": "Harta cu locația noastră",
+    "openInMaps": "Deschide în Google Maps"
   },
   "footer": {
     "navigation": "Navigare",
@@ -87,6 +93,7 @@
     "aboutTitle": "Despre noi",
     "contactTitle": "Contact",
     "formHeading": "Trimite-ne un mesaj",
+    "formIntro": "Ai o problemă cu calculatorul, laptopul sau rețeaua? Completează formularul de mai jos și te contactăm cât mai curând.",
     "footerDescription": "Partenerul tău de încredere pentru servicii IT complete.",
     "ctaHeading": "Ai o problemă IT? Hai să o rezolvăm."
   },

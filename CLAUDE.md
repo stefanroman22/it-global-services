@@ -56,6 +56,7 @@ src/
   lib/
     cms.ts                  # getCmsData(locale) + typed accessors — the CMS data layer
     contactFields.ts        # resolves arbitrary contact_info keys into cards
+    pageOptions.ts          # CMS display options per page (defaults, widths, colours)
     site.ts                 # SITE_URL + hreflang/canonical helpers
   proxy.ts                  # next-intl locale negotiation (Next 16 middleware)
 messages/{ro,en,hu}.json    # UI-chrome strings (nav, forms, aria labels, fallbacks)
@@ -86,6 +87,17 @@ cms.config.json             # declares the CMS content schema (keys, types, page
   font via `--cms-font-body` / `--cms-font-heading`; without it the bundled Open Sans
   is used. Service banners (`services_catalog` `image`), `about_intro_image` and
   `contact_image` fall back to no banner / the animated illustrations when empty.
+- **Display options** (ADR-0013, kit `readOptions`): `services_page_options`,
+  `about_page_options` and `contact_page_options` let the client pick the page
+  `background` / `card_background` colours, the text `content_width` (`narrow` = the
+  original reading column … `full`) and per-page layout (About `image_position`,
+  Contact `layout` / `show_map`). Read them only through `src/lib/pageOptions.ts`; its
+  `*_PAGE_DEFAULTS` are the designed look and apply when the service or a value is
+  missing. Banner images keep the standard container at every width. Custom colours
+  apply to the light theme only (dark keeps its derived palette). Each
+  `services_catalog` item may also carry `page_title` (inline rich text; replaces
+  `title` on the service page heading only — menus, cards, footer, metadata keep
+  `title`) and `show_title` (toggle; off keeps an `sr-only` `<h1>`).
 - Endpoint + preview behaviour are controlled by env vars (`NEXT_PUBLIC_CMS_ENDPOINT`,
   `NEXT_PUBLIC_CMS_PREVIEW_TOKEN`) set on Vercel — not in this repo. The endpoint env
   var stays locale-less; `cms.ts` derives localized URLs from it.

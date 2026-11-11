@@ -13,6 +13,7 @@ import {
   keyFeatures,
 } from "@/lib/cms";
 import { plainText } from "@/lib/cms-rich-text";
+import { aboutPageOptions } from "@/lib/pageOptions";
 
 export async function generateMetadata({
   params,
@@ -67,6 +68,7 @@ export default async function AboutPage({
       introImageAlt={introImage.alt ?? ""}
       features={keyFeatures(cms)}
       contact={contactInfo(cms)}
+      options={aboutPageOptions(cms)}
     />
   );
 }

@@ -12,6 +12,7 @@ import {
   type ServiceCatalogItem,
 } from "@/lib/cms";
 import { toService } from "@/data/services";
+import { servicePageOptions } from "@/lib/pageOptions";
 import { plainText, slugify } from "@/lib/cms-rich-text";
 import { SetRouteAlternates } from "@/components/providers/RouteAlternatesProvider";
 import ServicePageContent from "./ServicePageContent";
@@ -127,6 +128,7 @@ export default async function ServicePage({
         service={toService(item)}
         allServices={catalog.map(toService)}
         contact={contactInfo(cms)}
+        options={servicePageOptions(cms)}
       />
     </>
   );

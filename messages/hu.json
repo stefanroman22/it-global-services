@@ -32,6 +32,8 @@
     "namePlaceholder": "Az Ön neve",
     "emailPlaceholder": "on@pelda.hu",
     "phonePlaceholder": "+40 700 000 000",
+    "company": "Cég",
+    "companyPlaceholder": "Cégnév (nem kötelező)",
     "messagePlaceholder": "Írja le a problémáját vagy kérdését…",
     "nameRequired": "A név megadása kötelező.",
     "emailRequired": "Az e-mail cím megadása kötelező.",
@@ -53,6 +55,10 @@
     "visitUs": "Látogasson el hozzánk",
     "businessHours": "Nyitvatartás",
     "website": "Weboldal"
+  },
+  "contactPage": {
+    "mapTitle": "Helyszínünk térképe",
+    "openInMaps": "Megnyitás a Google Térképben"
   },
   "footer": {
     "navigation": "Navigáció",
@@ -87,6 +93,7 @@
     "aboutTitle": "Rólunk",
     "contactTitle": "Kapcsolat",
     "formHeading": "Küldjön nekünk üzenetet",
+    "formIntro": "Gondja van a számítógépével, laptopjával vagy a hálózatával? Töltse ki az alábbi űrlapot, és hamarosan felvesszük Önnel a kapcsolatot.",
     "footerDescription": "Megbízható partnere a teljes körű IT-szolgáltatásokban.",
     "ctaHeading": "Kérdése van az IT-vel kapcsolatban? Beszéljünk."
   },

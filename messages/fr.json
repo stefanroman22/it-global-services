@@ -32,6 +32,8 @@
     "namePlaceholder": "Votre nom",
     "emailPlaceholder": "vous@exemple.fr",
     "phonePlaceholder": "+40 700 000 000",
+    "company": "Entreprise",
+    "companyPlaceholder": "Nom de l’entreprise (facultatif)",
     "messagePlaceholder": "Décrivez votre problème ou votre question…",
     "nameRequired": "Le nom est obligatoire.",
     "emailRequired": "L'e-mail est obligatoire.",
@@ -53,6 +55,10 @@
     "visitUs": "Rendez-nous visite",
     "businessHours": "Horaires",
     "website": "Site web"
+  },
+  "contactPage": {
+    "mapTitle": "Carte de notre emplacement",
+    "openInMaps": "Ouvrir dans Google Maps"
   },
   "footer": {
     "navigation": "Navigation",
@@ -87,6 +93,7 @@
     "aboutTitle": "À propos",
     "contactTitle": "Contact",
     "formHeading": "Envoyez-nous un message",
+    "formIntro": "Un problème avec votre ordinateur, votre portable ou votre réseau ? Remplissez le formulaire ci-dessous et nous vous recontacterons dans les plus brefs délais.",
     "footerDescription": "Votre partenaire de confiance pour des services informatiques complets.",
     "ctaHeading": "Des questions sur votre informatique ? Discutons-en."
   },
