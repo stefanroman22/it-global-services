@@ -33,7 +33,7 @@ export default function ServicesGrid({
             as="div"
             value={subhead}
             format="rich"
-            className="section-subtitle cms-inv mx-auto text-white/75"
+            className="section-subtitle cms-inv mx-auto text-white/60"
           />
         </motion.div>
 

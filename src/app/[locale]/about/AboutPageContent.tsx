@@ -146,7 +146,7 @@ export default function AboutPageContent({
                 value={introBody}
                 format="rich"
                 headingOffset={1}
-                className="text-base leading-relaxed text-ink opacity-80"
+                className="text-base leading-relaxed text-ink-80"
               />
             </div>
           </motion.div>
@@ -196,7 +196,7 @@ export default function AboutPageContent({
                       value={p.description}
                       format="rich"
                       headingOffset={1}
-                      className="text-sm leading-relaxed opacity-75"
+                      className="text-sm leading-relaxed text-ink-75"
                     />
                   </div>
                 </motion.div>

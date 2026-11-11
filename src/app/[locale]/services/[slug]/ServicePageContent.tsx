@@ -118,7 +118,7 @@ export default function ServicePageContent({
             <RichText
               value={service.fullDescription}
               format="rich"
-              className="text-base leading-relaxed text-ink opacity-80 md:text-lg"
+              className="text-base leading-relaxed text-ink-80 md:text-lg"
             />
           </motion.div>
 

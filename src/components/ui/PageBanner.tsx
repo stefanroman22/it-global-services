@@ -54,9 +54,9 @@ export default function PageBanner({
             </h1>
             {subtitle && (
               <motion.div
-                className="mt-2 max-w-2xl text-base opacity-75 md:text-lg"
+                className="mt-2 max-w-2xl text-base text-ink-75 md:text-lg"
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 0.75, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <RichText value={subtitle} format="rich" />

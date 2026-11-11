@@ -185,7 +185,8 @@
   }
 
   .section-subtitle {
-    @apply mb-10 max-w-2xl text-lg opacity-80;
+    @apply mb-10 max-w-2xl text-lg;
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
   }
 
   /* ---- Form inputs ---- */
@@ -259,6 +260,20 @@
 
   .text-ink {
     color: var(--ink);
+  }
+
+  /* Muted ink for CMS prose. Never fade CMS text with `opacity`: it also fades
+     the colours a client picks (and their dark-theme variants) below 4.5:1. */
+  .text-ink-80 {
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
+  }
+
+  .text-ink-75 {
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
+  }
+
+  .text-ink-56 {
+    color: color-mix(in srgb, var(--ink) 56%, transparent);
   }
 
   .bg-surface-card {

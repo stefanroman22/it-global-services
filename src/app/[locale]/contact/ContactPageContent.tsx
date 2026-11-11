@@ -283,7 +283,7 @@ export default function ContactPageContent({
               <RichText
                 value={formIntro}
                 format="rich"
-                className="mb-8 text-base leading-relaxed opacity-80 md:text-lg"
+                className="mb-8 text-base leading-relaxed text-ink-80 md:text-lg"
               />
               <ContactForm variant="bare" showCompany />
             </motion.div>

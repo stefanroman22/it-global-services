@@ -38,7 +38,7 @@ export default function WhyChooseUs({
           <RichText
             value={subhead}
             format="rich"
-            className="section-subtitle mx-auto text-ink opacity-70"
+            className="section-subtitle mx-auto text-ink-56"
           />
         </motion.div>
 
@@ -72,7 +72,7 @@ export default function WhyChooseUs({
                 value={f.description}
                 format="rich"
                 headingOffset={1}
-                className="text-sm leading-relaxed text-ink opacity-75"
+                className="text-sm leading-relaxed text-ink-75"
               />
             </motion.div>
           ))}
