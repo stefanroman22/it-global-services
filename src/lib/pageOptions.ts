@@ -25,7 +25,7 @@ export const SERVICE_PAGE_DEFAULTS = {
 export const ABOUT_PAGE_DEFAULTS = {
   background: "",
   card_background: "",
-  content_width: "wide",
+  content_width: "standard",
   /** top | left | right | hidden */
   image_position: "top",
 };
